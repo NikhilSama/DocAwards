@@ -5,7 +5,8 @@
 	<?php
 		echo $this->Form->input('name');
 		echo $this->Form->input('address');
-		echo $this->Form->input('coords');
+		echo $this->Form->input('lat');
+		echo $this->Form->input('long');
 		echo $this->Form->input('city_id');
 		echo $this->Form->input('country_id');
 		echo $this->Form->input('pin_code_id');

@@ -5,7 +5,8 @@
 			<th><?php echo $this->Paginator->sort('id'); ?></th>
 			<th><?php echo $this->Paginator->sort('name'); ?></th>
 			<th><?php echo $this->Paginator->sort('address'); ?></th>
-			<th><?php echo $this->Paginator->sort('coords'); ?></th>
+			<th><?php echo $this->Paginator->sort('lat'); ?></th>
+			<th><?php echo $this->Paginator->sort('long'); ?></th>
 			<th><?php echo $this->Paginator->sort('city_id'); ?></th>
 			<th><?php echo $this->Paginator->sort('country_id'); ?></th>
 			<th><?php echo $this->Paginator->sort('pin_code_id'); ?></th>
@@ -19,7 +20,8 @@
 		<td><?php echo h($location['Location']['id']); ?>&nbsp;</td>
 		<td><?php echo h($location['Location']['name']); ?>&nbsp;</td>
 		<td><?php echo h($location['Location']['address']); ?>&nbsp;</td>
-		<td><?php echo h($location['Location']['coords']); ?>&nbsp;</td>
+		<td><?php echo h($location['Location']['lat']); ?>&nbsp;</td>
+		<td><?php echo h($location['Location']['long']); ?>&nbsp;</td>
 		<td>
 			<?php echo $this->Html->link($location['City']['name'], array('controller' => 'cities', 'action' => 'view', $location['City']['id'])); ?>
 		</td>

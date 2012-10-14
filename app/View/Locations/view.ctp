@@ -16,9 +16,14 @@
 			<?php echo h($location['Location']['address']); ?>
 			&nbsp;
 		</dd>
-		<dt><?php echo __('Coords'); ?></dt>
+		<dt><?php echo __('Latitude'); ?></dt>
 		<dd>
-			<?php echo h($location['Location']['coords']); ?>
+			<?php echo h($location['Location']['lat']); ?>
+			&nbsp;
+		</dd>
+		<dt><?php echo __('Longitude'); ?></dt>
+		<dd>
+			<?php echo h($location['Location']['long']); ?>
 			&nbsp;
 		</dd>
 		<dt><?php echo __('City'); ?></dt>
