@@ -39,6 +39,11 @@ class DoctorsController extends AppController {
  */
 	public function add() {
 		if ($this->request->is('post')) {
+			$file_name
+			= 'profile_pics/'.$this->request->data['Doctor']['last_name'].$this->request->data['Doctor']['first_name'].
+			str_replace(" ","_", $this->request->data['Doctor']['image']['name']);
+			copy($this->request->data['Doctor']['image']['tmp_name'], $file_name);
+			$this->request->data['Doctor']['image'] = $file_name;
 			$this->Doctor->create();
 			if ($this->Doctor->save($this->request->data)) {
 				$this->Session->setFlash(__('The doctor has been saved'));
@@ -64,6 +69,17 @@ class DoctorsController extends AppController {
 			throw new NotFoundException(__('Invalid doctor'));
 		}
 		if ($this->request->is('post') || $this->request->is('put')) {
+			if (isset($this->request->data['Doctor']['image']['name']) &&
+			    $this->request->data['Doctor']['image']['name']) {
+				$file_name
+					= 'profile_pics/'.$this->request->data['Doctor']['last_name'].$this->request->data['Doctor']['first_name'].
+						str_replace(" ","_", $this->request->data['Doctor']['image']['name']);
+				copy($this->request->data['Doctor']['image']['tmp_name'], $file_name);
+				$this->request->data['Doctor']['image'] = $file_name;
+
+			} else {
+				unset($this->request->data['Doctor']['image']);
+			}
 			if ($this->Doctor->save($this->request->data)) {
 				$this->Session->setFlash(__('The doctor has been saved'));
 				$this->redirect(array('action' => 'index'));

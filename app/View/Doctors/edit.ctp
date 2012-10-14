@@ -1,5 +1,5 @@
 <div class="doctors form">
-<?php echo $this->Form->create('Doctor'); ?>
+<?php echo $this->Form->create('Doctor', array('type' => 'file')); ?>
 	<fieldset>
 		<legend><?php echo __('Edit Doctor'); ?></legend>
 	<?php
@@ -8,7 +8,7 @@
 		echo $this->Form->input('first_name');
 		echo $this->Form->input('middle_name');
 		echo $this->Form->input('last_name');
-		echo $this->Form->input('image');
+		echo $this->Form->input('image', array('label' => 'Picture', 'type' => 'file'));
 		echo $this->Form->input('gender');
 		echo $this->Form->input('DOB');
 		echo $this->Form->input('first_yr_of_practice');

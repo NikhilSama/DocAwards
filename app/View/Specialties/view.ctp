@@ -11,6 +11,11 @@
 			<?php echo h($specialty['Specialty']['name']); ?>
 			&nbsp;
 		</dd>
+		<dt><?php echo __('Description'); ?></dt>
+		<dd>
+			<?php echo h($specialty['Specialty']['description']); ?>
+			&nbsp;
+		</dd>
 		<dt><?php echo __('Created'); ?></dt>
 		<dd>
 			<?php echo h($specialty['Specialty']['created']); ?>

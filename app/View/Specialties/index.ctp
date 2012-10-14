@@ -4,6 +4,7 @@
 	<tr>
 			<th><?php echo $this->Paginator->sort('id'); ?></th>
 			<th><?php echo $this->Paginator->sort('name'); ?></th>
+			<th><?php echo $this->Paginator->sort('description'); ?></th>
 			<th><?php echo $this->Paginator->sort('created'); ?></th>
 			<th><?php echo $this->Paginator->sort('modified'); ?></th>
 			<th class="actions"><?php echo __('Actions'); ?></th>
@@ -13,6 +14,7 @@
 	<tr>
 		<td><?php echo h($specialty['Specialty']['id']); ?>&nbsp;</td>
 		<td><?php echo h($specialty['Specialty']['name']); ?>&nbsp;</td>
+		<td><?php echo h($specialty['Specialty']['description']); ?>&nbsp;</td>
 		<td><?php echo h($specialty['Specialty']['created']); ?>&nbsp;</td>
 		<td><?php echo h($specialty['Specialty']['modified']); ?>&nbsp;</td>
 		<td class="actions">

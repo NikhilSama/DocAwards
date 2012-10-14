@@ -96,4 +96,34 @@ class SpecialtiesController extends AppController {
 		$this->Session->setFlash(__('Specialty was not deleted'));
 		$this->redirect(array('action' => 'index'));
 	}
+	
+	public function autocomplete () {
+		$term = $this->request->query['term'];
+		$result['search_term'] = $term;
+		
+		$this->Specialty->recursive = -1;
+		$result['specialties'] = $this->Specialty->find('all',
+			array('fields' => array('id', 'name', 'description'),
+			      'conditions' => array("OR" => array(
+				'name LIKE' => '%'.$term.'%',
+				'description LIKE' => '%'.$term.'%'))));
+
+		$this->Specialty->Dslink->Disease->recursive = -1;
+		$result['diseases'] = $this->Specialty->Dslink->Disease->find('all',
+			array('fields' => array('id', 'name', 'description'),
+			      'conditions' => array("OR" => array(
+				'name LIKE' => '%'.$term.'%',
+				'description LIKE' => '%'.$term.'%'))));
+
+		$this->Specialty->Docspeclink->Doctor->recursive = -1;
+		$result['doctors'] = $this->Specialty->Docspeclink->Doctor->find('all',
+			array('fields' => array('id', 'first_name', 'middle_name', 'last_name'),
+			      'conditions' => array("OR" => array(
+				'first_name LIKE' => '%'.$term.'%',
+				'middle_name LIKE' => '%'.$term.'%',
+				'last_name LIKE' => '%'.$term.'%'))));
+		$this->set('result', $result);
+		$this->set('_serialize', 'result');
+	}
 }
+

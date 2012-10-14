@@ -11,6 +11,11 @@
 			<?php echo h($disease['Disease']['name']); ?>
 			&nbsp;
 		</dd>
+		<dt><?php echo __('Description'); ?></dt>
+		<dd>
+			<?php echo h($disease['Disease']['description']); ?>
+			&nbsp;
+		</dd>
 		<dt><?php echo __('Created'); ?></dt>
 		<dd>
 			<?php echo h($disease['Disease']['created']); ?>
