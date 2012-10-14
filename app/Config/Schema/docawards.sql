@@ -2,12 +2,15 @@ SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
+DROP SCHEMA IF EXISTS `docawards` ;
 CREATE SCHEMA IF NOT EXISTS `docawards` DEFAULT CHARACTER SET latin1 ;
 USE `docawards` ;
 
 -- -----------------------------------------------------
 -- Table `docawards`.`users`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `docawards`.`users` ;
+
 CREATE  TABLE IF NOT EXISTS `docawards`.`users` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `username` VARCHAR(45) NULL DEFAULT NULL ,
@@ -24,6 +27,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `docawards`.`appointments`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `docawards`.`appointments` ;
+
 CREATE  TABLE IF NOT EXISTS `docawards`.`appointments` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `user_id` INT(10) UNSIGNED NOT NULL ,
@@ -50,6 +55,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `docawards`.`cities`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `docawards`.`cities` ;
+
 CREATE  TABLE IF NOT EXISTS `docawards`.`cities` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(45) NULL DEFAULT NULL ,
@@ -58,7 +65,8 @@ CREATE  TABLE IF NOT EXISTS `docawards`.`cities` (
   `state` VARCHAR(45) NULL DEFAULT NULL ,
   `created` DATETIME NULL DEFAULT NULL ,
   `modified` DATETIME NULL DEFAULT NULL ,
-  PRIMARY KEY (`id`) )
+  PRIMARY KEY (`id`) ,
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC) )
 ENGINE = InnoDB
 AUTO_INCREMENT = 2
 DEFAULT CHARACTER SET = latin1;
@@ -67,6 +75,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `docawards`.`doctors`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `docawards`.`doctors` ;
+
 CREATE  TABLE IF NOT EXISTS `docawards`.`doctors` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `user_id` INT(10) UNSIGNED NOT NULL ,
@@ -93,6 +103,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `docawards`.`countries`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `docawards`.`countries` ;
+
 CREATE  TABLE IF NOT EXISTS `docawards`.`countries` (
   `id` INT(10) UNSIGNED NOT NULL ,
   `name` VARCHAR(45) NULL DEFAULT NULL ,
@@ -105,7 +117,8 @@ CREATE  TABLE IF NOT EXISTS `docawards`.`countries` (
   `cctld` VARCHAR(5) NULL DEFAULT NULL ,
   `created` DATETIME NULL DEFAULT NULL ,
   `modified` DATETIME NULL DEFAULT NULL ,
-  PRIMARY KEY (`id`) )
+  PRIMARY KEY (`id`) ,
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC) )
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = latin1;
 
@@ -113,12 +126,15 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `docawards`.`pin_codes`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `docawards`.`pin_codes` ;
+
 CREATE  TABLE IF NOT EXISTS `docawards`.`pin_codes` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `pin_code` VARCHAR(10) NULL DEFAULT NULL ,
   `created` DATETIME NULL DEFAULT NULL COMMENT '		' ,
   `modified` DATETIME NULL DEFAULT NULL ,
-  PRIMARY KEY (`id`) )
+  PRIMARY KEY (`id`) ,
+  UNIQUE INDEX `pin_code_UNIQUE` (`pin_code` ASC) )
 ENGINE = InnoDB
 AUTO_INCREMENT = 2
 DEFAULT CHARACTER SET = latin1;
@@ -127,11 +143,14 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `docawards`.`locations`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `docawards`.`locations` ;
+
 CREATE  TABLE IF NOT EXISTS `docawards`.`locations` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(45) NULL DEFAULT NULL ,
   `address` BLOB NULL DEFAULT NULL ,
-  `coords` POINT NULL DEFAULT NULL ,
+  `lat` DECIMAL(18,12) NULL DEFAULT NULL ,
+  `long` DECIMAL(18,12) NULL ,
   `city_id` INT(10) UNSIGNED NOT NULL ,
   `country_id` INT(10) UNSIGNED NOT NULL ,
   `pin_code_id` INT(10) UNSIGNED NOT NULL ,
@@ -141,6 +160,7 @@ CREATE  TABLE IF NOT EXISTS `docawards`.`locations` (
   INDEX `fk_locations_cities2_idx` (`city_id` ASC) ,
   INDEX `fk_locations_countries1_idx` (`country_id` ASC) ,
   INDEX `fk_locations_pin_codes1_idx` (`pin_code_id` ASC) ,
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC) ,
   CONSTRAINT `fk_locations_cities2`
     FOREIGN KEY (`city_id` )
     REFERENCES `docawards`.`cities` (`id` )
@@ -164,6 +184,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `docawards`.`consultlocationtypes`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `docawards`.`consultlocationtypes` ;
+
 CREATE  TABLE IF NOT EXISTS `docawards`.`consultlocationtypes` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(45) NULL DEFAULT NULL ,
@@ -178,6 +200,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `docawards`.`docconsultlocations`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `docawards`.`docconsultlocations` ;
+
 CREATE  TABLE IF NOT EXISTS `docawards`.`docconsultlocations` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `location_id` INT(10) UNSIGNED NOT NULL ,
@@ -212,6 +236,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `docawards`.`consult_types`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `docawards`.`consult_types` ;
+
 CREATE  TABLE IF NOT EXISTS `docawards`.`consult_types` (
   `it` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(45) NULL DEFAULT NULL ,
@@ -226,6 +252,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `docawards`.`consult_timings`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `docawards`.`consult_timings` ;
+
 CREATE  TABLE IF NOT EXISTS `docawards`.`consult_timings` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `monday` TINYINT(1) NULL DEFAULT '0' ,
@@ -263,12 +291,15 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `docawards`.`degrees`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `docawards`.`degrees` ;
+
 CREATE  TABLE IF NOT EXISTS `docawards`.`degrees` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `name` VARCHAR(45) NULL DEFAULT NULL ,
-  `created` DATETIME NULL DEFAULT NULL ,
+  `name` VARCHAR(45) NULL ,
+  `created` DATETIME NULL ,
   `modified` DATETIME NULL DEFAULT NULL ,
-  PRIMARY KEY (`id`) )
+  PRIMARY KEY (`id`) ,
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC) )
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = latin1;
 
@@ -276,12 +307,15 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `docawards`.`diseases`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `docawards`.`diseases` ;
+
 CREATE  TABLE IF NOT EXISTS `docawards`.`diseases` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `name` VARCHAR(45) NULL DEFAULT NULL ,
+  `name` VARCHAR(45) NULL ,
   `created` DATETIME NULL DEFAULT NULL ,
   `modified` DATETIME NULL DEFAULT NULL ,
-  PRIMARY KEY (`id`) )
+  PRIMARY KEY (`id`) ,
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC) )
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = latin1;
 
@@ -289,12 +323,15 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `docawards`.`specialties`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `docawards`.`specialties` ;
+
 CREATE  TABLE IF NOT EXISTS `docawards`.`specialties` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '	' ,
-  `name` VARCHAR(45) NULL DEFAULT NULL ,
+  `name` VARCHAR(45) NULL ,
   `created` DATETIME NULL DEFAULT NULL ,
   `modified` DATETIME NULL DEFAULT NULL ,
-  PRIMARY KEY (`id`) )
+  PRIMARY KEY (`id`) ,
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC) )
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = latin1;
 
@@ -302,6 +339,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `docawards`.`docspeclinks`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `docawards`.`docspeclinks` ;
+
 CREATE  TABLE IF NOT EXISTS `docawards`.`docspeclinks` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `doctor_id` INT(10) UNSIGNED NOT NULL ,
@@ -328,6 +367,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `docawards`.`doctor_contacts`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `docawards`.`doctor_contacts` ;
+
 CREATE  TABLE IF NOT EXISTS `docawards`.`doctor_contacts` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `doctor_id` INT(10) UNSIGNED NOT NULL ,
@@ -349,6 +390,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `docawards`.`specialtydiseaselinktypes`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `docawards`.`specialtydiseaselinktypes` ;
+
 CREATE  TABLE IF NOT EXISTS `docawards`.`specialtydiseaselinktypes` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(45) NULL DEFAULT NULL ,
@@ -362,6 +405,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `docawards`.`dslinks`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `docawards`.`dslinks` ;
+
 CREATE  TABLE IF NOT EXISTS `docawards`.`dslinks` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `specialty_id` INT(10) UNSIGNED NOT NULL ,
@@ -395,6 +440,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `docawards`.`experiences`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `docawards`.`experiences` ;
+
 CREATE  TABLE IF NOT EXISTS `docawards`.`experiences` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `from` DATE NULL DEFAULT NULL ,
@@ -424,6 +471,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `docawards`.`patients`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `docawards`.`patients` ;
+
 CREATE  TABLE IF NOT EXISTS `docawards`.`patients` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `user_id` INT(10) UNSIGNED NOT NULL ,
@@ -469,6 +518,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `docawards`.`questions`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `docawards`.`questions` ;
+
 CREATE  TABLE IF NOT EXISTS `docawards`.`questions` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `user_id` INT(10) UNSIGNED NOT NULL ,
@@ -489,6 +540,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `docawards`.`posts`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `docawards`.`posts` ;
+
 CREATE  TABLE IF NOT EXISTS `docawards`.`posts` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `user_id` INT(10) UNSIGNED NOT NULL ,
@@ -517,6 +570,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `docawards`.`post_feedbacks`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `docawards`.`post_feedbacks` ;
+
 CREATE  TABLE IF NOT EXISTS `docawards`.`post_feedbacks` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `post_id` INT(10) UNSIGNED NOT NULL ,
@@ -545,6 +600,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `docawards`.`qualifications`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `docawards`.`qualifications` ;
+
 CREATE  TABLE IF NOT EXISTS `docawards`.`qualifications` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `doctor_id` INT(10) UNSIGNED NOT NULL ,
@@ -580,6 +637,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `docawards`.`question_followers`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `docawards`.`question_followers` ;
+
 CREATE  TABLE IF NOT EXISTS `docawards`.`question_followers` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `question_id` INT(10) UNSIGNED NOT NULL ,
@@ -606,6 +665,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `docawards`.`user_followers`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `docawards`.`user_followers` ;
+
 CREATE  TABLE IF NOT EXISTS `docawards`.`user_followers` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `source_user_id` INT(10) UNSIGNED NOT NULL ,
@@ -627,6 +688,75 @@ CREATE  TABLE IF NOT EXISTS `docawards`.`user_followers` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = latin1;
+
+
+-- -----------------------------------------------------
+-- Table `docawards`.`tags`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `docawards`.`tags` ;
+
+CREATE  TABLE IF NOT EXISTS `docawards`.`tags` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `name` VARCHAR(45) NULL ,
+  `created` DATETIME NULL ,
+  `modified` DATETIME NULL ,
+  PRIMARY KEY (`id`) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `docawards`.`tags_questions`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `docawards`.`tags_questions` ;
+
+CREATE  TABLE IF NOT EXISTS `docawards`.`tags_questions` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `questions_id` INT(10) UNSIGNED NOT NULL ,
+  `tags_id` INT UNSIGNED NOT NULL ,
+  `created` DATETIME NULL ,
+  `modified` DATETIME NULL ,
+  PRIMARY KEY (`id`) ,
+  INDEX `fk_questions_has_tags_tags1_idx` (`tags_id` ASC) ,
+  INDEX `fk_questions_has_tags_questions1_idx` (`questions_id` ASC) ,
+  CONSTRAINT `fk_questions_has_tags_questions1`
+    FOREIGN KEY (`questions_id` )
+    REFERENCES `docawards`.`questions` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_questions_has_tags_tags1`
+    FOREIGN KEY (`tags_id` )
+    REFERENCES `docawards`.`tags` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+
+-- -----------------------------------------------------
+-- Table `docawards`.`tag_followers`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `docawards`.`tag_followers` ;
+
+CREATE  TABLE IF NOT EXISTS `docawards`.`tag_followers` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `tag_id` INT UNSIGNED NOT NULL ,
+  `user_id` INT(10) UNSIGNED NOT NULL ,
+  `created` DATETIME NULL ,
+  `modified` DATETIME NULL ,
+  PRIMARY KEY (`id`) ,
+  INDEX `fk_tag_followers_tags1_idx` (`tag_id` ASC) ,
+  INDEX `fk_tag_followers_users1_idx` (`user_id` ASC) ,
+  CONSTRAINT `fk_tag_followers_tags1`
+    FOREIGN KEY (`tag_id` )
+    REFERENCES `docawards`.`tags` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_tag_followers_users1`
+    FOREIGN KEY (`user_id` )
+    REFERENCES `docawards`.`users` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
 
 
