@@ -312,6 +312,7 @@ DROP TABLE IF EXISTS `docawards`.`diseases` ;
 CREATE  TABLE IF NOT EXISTS `docawards`.`diseases` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(45) NULL ,
+  `description` BLOB NULL DEFAULT NULL ,
   `created` DATETIME NULL DEFAULT NULL ,
   `modified` DATETIME NULL DEFAULT NULL ,
   PRIMARY KEY (`id`) ,
@@ -328,6 +329,7 @@ DROP TABLE IF EXISTS `docawards`.`specialties` ;
 CREATE  TABLE IF NOT EXISTS `docawards`.`specialties` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '	' ,
   `name` VARCHAR(45) NULL ,
+  `description` BLOB NULL DEFAULT NULL ,
   `created` DATETIME NULL DEFAULT NULL ,
   `modified` DATETIME NULL DEFAULT NULL ,
   PRIMARY KEY (`id`) ,
