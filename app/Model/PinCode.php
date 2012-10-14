@@ -8,7 +8,7 @@ App::uses('AppModel', 'Model');
  */
 class PinCode extends AppModel {
 
-
+   var $displayField = 'pin_code';
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
 
 /**
