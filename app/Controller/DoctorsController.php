@@ -174,7 +174,7 @@ class DoctorsController extends AppController {
 		if (isset($this->request->query['jsonp_callback'])) {
 			$this->autoLayout = $this->autoRender = false;
 			$this->set('callback', $this->request->query['jsonp_callback']);
-			$this->render('/layouts/jsonp');
+			$this->render('/Layouts/jsonp');
 		} else {
 			$this->set('_serialize', 'result');
 		}

@@ -98,35 +98,43 @@ class SpecialtiesController extends AppController {
 	}
 	
 	public function autocomplete () {
-		$term = $this->request->query['term'];
+		$term = isset($this->request->query['term']) ? $this->request->query['term'] : null;
 		$result['search_term'] = $term;
+		
+		if ($term) {
+			$specialties_disease_conditions = array("OR" => array(
+				'name LIKE' => '%'.$term.'%',
+				'description LIKE' => '%'.$term.'%'));
+			
+			$doctors_conditions = array("OR" => array(
+				'first_name LIKE' => '%'.$term.'%',
+				'middle_name LIKE' => '%'.$term.'%',
+				'last_name LIKE' => '%'.$term.'%'));
+		} else {
+			$specialties_disease_conditions = $doctors_conditions = array();
+		}
 		
 		$this->Specialty->recursive = -1;
 		$result['specialties'] = $this->Specialty->find('all',
 			array('fields' => array('id', 'name', 'description'),
-			      'conditions' => array("OR" => array(
-				'name LIKE' => '%'.$term.'%',
-				'description LIKE' => '%'.$term.'%'))));
+			      'conditions' => $specialties_disease_conditions));
 
 		$this->Specialty->Dslink->Disease->recursive = -1;
 		$result['diseases'] = $this->Specialty->Dslink->Disease->find('all',
 			array('fields' => array('id', 'name', 'description'),
-			      'conditions' => array("OR" => array(
-				'name LIKE' => '%'.$term.'%',
-				'description LIKE' => '%'.$term.'%'))));
+			      'conditions' => $specialties_disease_conditions));
 
 		$this->Specialty->Docspeclink->Doctor->recursive = -1;
 		$result['doctors'] = $this->Specialty->Docspeclink->Doctor->find('all',
 			array('fields' => array('id', 'first_name', 'middle_name', 'last_name'),
-			      'conditions' => array("OR" => array(
-				'first_name LIKE' => '%'.$term.'%',
-				'middle_name LIKE' => '%'.$term.'%',
-				'last_name LIKE' => '%'.$term.'%'))));
+			      'conditions' => $doctors_conditions));
+		
 		$this->set('result', $result);
+		
 		if (isset($this->request->query['jsonp_callback'])) {
 			$this->autoLayout = $this->autoRender = false;
 			$this->set('callback', $this->request->query['jsonp_callback']);
-			$this->render('/layouts/jsonp');
+			$this->render('/Layouts/jsonp');
 		} else {
 			$this->set('_serialize', 'result');
 		}
