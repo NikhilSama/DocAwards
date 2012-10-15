@@ -52,7 +52,8 @@ Sample Output (no jsonp, and no term restriction)
 
 2) Get Doctors: http://localhost/doctors/get_doctors.json
 
-Returns list of all doctors, along with specialization, locations etc.
+Returns list of all doctors, along with specialization, locations etc. If no parameters are set, then returns all doctors.
+
 Optional paramters:
 a) jsonp_callback: If provided then pads the returned json in the provided jsonp_callback.
 eg. http://localhost/doctors/get_doctors.json?jsonp_callback=callback
