@@ -123,8 +123,9 @@ class DoctorsController extends AppController {
 		$doctor_id = isset($this->request->query['doctor_id']) ? $this->request->query['doctor_id'] : null;
 		$lat = isset($this->request->query['latitude']) ? $this->request->query['latitude'] : null;
 		$long = isset($this->request->query['longitude']) ? $this->request->query['longitude'] : null;
-		$conditions = array();	
-		
+		$conditions = $doc_ids_to_get_geo = $doc_ids_to_get_dis = $doc_ids_to_get_sp = array();
+
+
 		//geo restrictions first
 		if ($lat && $long) {
 			$geo_conditions = array('Location.lat <' => $lat + SEARCH_RADIUS_IN_LAT_DEGREE,
@@ -132,37 +133,114 @@ class DoctorsController extends AppController {
 							'Location.long <' => $long + SEARCH_RADIUS_IN_LONG_DEGREE,
 							'Location.long >' => $long - SEARCH_RADIUS_IN_LONG_DEGREE);
 			$contain = array('Docconsultlocation' =>
-					 array('fields' => array('id'),
-					       'Doctor' => array('id')));
+					 array('fields' => array('id', 'doctor_id')));
 			$locations = $this->Doctor->Docconsultlocation->Location->find('all', array('fields' => array('id'),
 						'contain' => $contain, 'conditions' => $geo_conditions));
-			//echo debug($locations);
-			$doc_ids_to_get = array();
 			foreach($locations as $location) {
 				foreach ($location['Docconsultlocation'] as $doclocation) {
-	 				array_push($doc_ids_to_get, $doclocation['Doctor']['id']);
+	 				array_push($doc_ids_to_get_geo, $doclocation['doctor_id']);
+				}
+			}			
+		}
+				
+		if ($specialty_id) {
+			$contain = array('Docspeclink' => array('fields' => array('doctor_id')));
+			$specialties = $this->Doctor->Docspeclink->Specialty->find('all', array('fields' => array('id'),
+										   'contain' => $contain,
+										   'conditions' => array('id' => $specialty_id)));
+			foreach($specialties as $specialty) {
+				foreach($specialty['Docspeclink'] as $docspeclink)
+	 				array_push($doc_ids_to_get_sp, $docspeclink['doctor_id']);				
+			}
+		}
+		
+		if ($disease_id) {
+			$contain = array('Dslink' => array(
+				'fields' => array('id'),
+				'Specialty' => array(
+					'fields' => array('id', 'name'),
+					'Docspeclink' => array(
+						'fields' => array('doctor_id')))));
+			$diseases = $this->Doctor->Docspeclink->
+					Specialty->Dslink->Disease->find('all', array('fields' => array('id'),
+											'contain' => $contain,
+											'conditions' => array('id' => $disease_id)));
+			foreach($diseases as $disease) {
+				foreach($disease['Dslink'] as $dslink) {
+					foreach($dslink['Specialty']['Docspeclink'] as $docspeclink) {
+						array_push($doc_ids_to_get_dis, $docspeclink['doctor_id']);
+					}
 				}
 			}
-			//echo debug($doc_ids_to_get);
-			array_push($conditions, array('Doctor.id' => $doc_ids_to_get));
-			
 		}
-		
-		if ($disease_id) {}
-		
-		if ($specialty_id) {}
-		
+
 		if ($doctor_id) {
 			$conditions = array('Doctor.id' => $doctor_id);
+		} else {
+			$doc_ids_to_get = array();
+			$no_doctors = false;
+			
+			if ($specialty_id) {
+				if (empty($doc_ids_to_get_sp)) {
+					$no_doctors = true;
+				} else {
+					$doc_ids_to_get = $doc_ids_to_get_sp;	
+				}
+			}
+			if ($disease_id && !$no_doctors) {
+				if (empty($doc_ids_to_get_dis)) {
+					$no_doctors = true;
+				} else {
+					if (empty($doc_ids_to_get)) {
+						$doc_ids_to_get = $doc_ids_to_get_dis;
+					} else {
+						$doc_ids_to_get = array_intersect($doc_ids_to_get, $doc_ids_to_get_dis);
+					}
+				}
+			}
+			if ($long && $lat && !$no_doctors) {
+				if (empty($doc_ids_to_get_geo)) {
+					$no_doctors = true;
+				} else {
+					if (empty($doc_ids_to_get)) {
+						$doc_ids_to_get = $doc_ids_to_get_geo; 
+					} else {
+						$doc_ids_to_get = array_intersect($doc_ids_to_get, $doc_ids_to_get_geo);
+					}
+				}
+			}
+			$conditions = array('Doctor.id' => $doc_ids_to_get);
 		}
-		$contain = array ('Docconsultlocation' =>
-				array('fields' => array('addl'),
-				      'Consultlocationtype' => array('fields' => array('name')),
-				      'Location' => array('fields' => array('id', 'name', 'address', 'lat', 'long'),
+		
+		$contain = array (
+				  'Docconsultlocation' =>
+					array('fields' => array('addl'),
+					      'Consultlocationtype' => array('fields' => array('name')),
+					      'Location' => array('fields' => array('id', 'name', 'address', 'lat', 'long'),
 							  'Country' => array('fields' => array('name')),
 							  'City' => array('fields' => array('name')),
-							  'PinCode' => array('fields' => array('pin_code')))
-				      ));
+							  'PinCode' => array('fields' => array('pin_code'))),
+				      ),
+				'Docspeclink' =>
+					array('fields' => array('id'),
+					      'Specialty' => array('fields' => array('name', 'description'))),
+				'Qualification' =>
+					array('fields' => array('id'),
+					      'Location' => array(
+						'fields' => array('name', 'address', 'lat', 'long'),
+						'City' => array('fields'=>array('name')), 'Country'=> array('fields'=>array('name')),
+						'PinCode' => array('fields' => array('pin_code'))),
+					      'Degree' => array('fields' => array('name'))
+					      ),
+				'Experience' =>
+					array('fields' => array('from', 'to', 'dept'),
+					      'Location' => array(
+						'fields' => array('name', 'address', 'lat', 'long'),
+						'City' => array('fields'=>array('name')), 'Country'=> array('fields'=>array('name')),
+						'PinCode' => array('fields' => array('pin_code')))),
+				'DoctorContact' =>
+					array('fields' => array('phone', 'email'))
+				);
 		
 
 		$fields = array('id', 'first_name', 'middle_name', 'last_name');		
