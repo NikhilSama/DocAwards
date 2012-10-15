@@ -374,6 +374,7 @@ DROP TABLE IF EXISTS `docawards`.`doctor_contacts` ;
 CREATE  TABLE IF NOT EXISTS `docawards`.`doctor_contacts` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `doctor_id` INT(10) UNSIGNED NOT NULL ,
+  `type` VARCHAR(45) NULL ,
   `phone` VARCHAR(45) NULL DEFAULT NULL ,
   `email` VARCHAR(150) NULL DEFAULT NULL ,
   `created` DATETIME NULL DEFAULT NULL ,
