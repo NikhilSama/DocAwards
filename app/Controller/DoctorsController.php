@@ -221,6 +221,7 @@ class DoctorsController extends AppController {
 							  'Country' => array('fields' => array('name')),
 							  'City' => array('fields' => array('name')),
 							  'PinCode' => array('fields' => array('pin_code'))),
+					      'ConsultTiming',
 				      ),
 				'Docspeclink' =>
 					array('fields' => array('id'),
