@@ -21,6 +21,12 @@
 			<?php echo h($doctorContact['DoctorContact']['email']); ?>
 			&nbsp;
 		</dd>
+                <dt><?php echo __('Type'); ?></dt>
+                <dd>
+                        <?php echo h($doctorContact['DoctorContact']['type']); ?>
+                        &nbsp;
+                </dd>
+
 		<dt><?php echo __('Created'); ?></dt>
 		<dd>
 			<?php echo h($doctorContact['DoctorContact']['created']); ?>

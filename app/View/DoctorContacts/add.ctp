@@ -6,6 +6,7 @@
 		echo $this->Form->input('doctor_id');
 		echo $this->Form->input('phone');
 		echo $this->Form->input('email');
+                echo $this->Form->input('type');
 	?>
 	</fieldset>
 <?php echo $this->Form->end(__('Submit')); ?>
