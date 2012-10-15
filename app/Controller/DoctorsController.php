@@ -209,7 +209,8 @@ class DoctorsController extends AppController {
 					}
 				}
 			}
-			$conditions = array('Doctor.id' => $doc_ids_to_get);
+			//Restrict conditions only if lat/long, or disease or specialty is set. Else return all docs
+			if (($lat && $long) || $disease_id || $specialty_id) $conditions = array('Doctor.id' => $doc_ids_to_get);
 		}
 		
 		$contain = array (

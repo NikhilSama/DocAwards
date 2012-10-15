@@ -58,7 +58,10 @@ a) jsonp_callback: If provided then pads the returned json in the provided jsonp
 eg. http://localhost/doctors/get_doctors.json?jsonp_callback=callback
 b) latitude and longitude: If provided, restricts output to doctors who have at least one location within 50 KM of the provided latitude and longitude.
 eg. http://localhost/doctors/get_doctors.json?jsonp_callback=callback&latitude=25&longitude=77
-c) 
+c) specialty_id: If provided then doctors with the specialty id provided are returned.  If latitude/long is also provided then list is further restricted to doctors with this specialty id and within the lat/long
+eg. http://localhost/doctors/get_doctors.json?latitude=28.5&longitude=77&specialty_id=1
+d) disease_id: If provided then doctors who specialize in treatment of this disease are returned.  If latitude/long is also provided then list is further restricted to doctors who treat this disease id and within the lat/long
+e) doctor_id: If provided then all other parameters (latitude, longitude, specialty_id, disease_id) are ignored, and only the doctor with specified doctor_id is returned
 Sample Output below:
 [
     {
