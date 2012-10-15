@@ -239,11 +239,11 @@ DEFAULT CHARACTER SET = latin1;
 DROP TABLE IF EXISTS `docawards`.`consult_types` ;
 
 CREATE  TABLE IF NOT EXISTS `docawards`.`consult_types` (
-  `it` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(45) NULL DEFAULT NULL ,
   `created` DATETIME NULL DEFAULT NULL ,
   `modified` DATETIME NULL DEFAULT NULL ,
-  PRIMARY KEY (`it`) )
+  PRIMARY KEY (`id`) )
 ENGINE = InnoDB
 AUTO_INCREMENT = 3
 DEFAULT CHARACTER SET = latin1;
@@ -281,7 +281,7 @@ CREATE  TABLE IF NOT EXISTS `docawards`.`consult_timings` (
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_consult_timings_consult_types1`
     FOREIGN KEY (`consult_type_id` )
-    REFERENCES `docawards`.`consult_types` (`it` )
+    REFERENCES `docawards`.`consult_types` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
