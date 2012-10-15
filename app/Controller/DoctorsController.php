@@ -116,4 +116,67 @@ class DoctorsController extends AppController {
 		$this->Session->setFlash(__('Doctor was not deleted'));
 		$this->redirect(array('action' => 'index'));
 	}
+	
+	public function get_doctors() {
+		$disease_id = isset($this->request->query['disease_id']) ? $this->request->query['disease_id'] : null;
+		$specialty_id = isset($this->request->query['specialty_id']) ? $this->request->query['specialty_id'] : null;
+		$doctor_id = isset($this->request->query['doctor_id']) ? $this->request->query['doctor_id'] : null;
+		$lat = isset($this->request->query['latitude']) ? $this->request->query['latitude'] : null;
+		$long = isset($this->request->query['longitude']) ? $this->request->query['longitude'] : null;
+		$conditions = array();	
+		
+		//geo restrictions first
+		if ($lat && $long) {
+			$geo_conditions = array('Location.lat <' => $lat + SEARCH_RADIUS_IN_LAT_DEGREE,
+							'Location.lat >' => $lat - SEARCH_RADIUS_IN_LAT_DEGREE,
+							'Location.long <' => $long + SEARCH_RADIUS_IN_LONG_DEGREE,
+							'Location.long >' => $long - SEARCH_RADIUS_IN_LONG_DEGREE);
+			$contain = array('Docconsultlocation' =>
+					 array('fields' => array('id'),
+					       'Doctor' => array('id')));
+			$locations = $this->Doctor->Docconsultlocation->Location->find('all', array('fields' => array('id'),
+						'contain' => $contain, 'conditions' => $geo_conditions));
+			//echo debug($locations);
+			$doc_ids_to_get = array();
+			foreach($locations as $location) {
+				foreach ($location['Docconsultlocation'] as $doclocation) {
+	 				array_push($doc_ids_to_get, $doclocation['Doctor']['id']);
+				}
+			}
+			//echo debug($doc_ids_to_get);
+			array_push($conditions, array('Doctor.id' => $doc_ids_to_get));
+			
+		}
+		
+		if ($disease_id) {}
+		
+		if ($specialty_id) {}
+		
+		if ($doctor_id) {
+			$conditions = array('Doctor.id' => $doctor_id);
+		}
+		$contain = array ('Docconsultlocation' =>
+				array('fields' => array('addl'),
+				      'Consultlocationtype' => array('fields' => array('name')),
+				      'Location' => array('fields' => array('id', 'name', 'address', 'lat', 'long'),
+							  'Country' => array('fields' => array('name')),
+							  'City' => array('fields' => array('name')),
+							  'PinCode' => array('fields' => array('pin_code')))
+				      ));
+		
+
+		$fields = array('id', 'first_name', 'middle_name', 'last_name');		
+		$doctors = $this->Doctor->find('all', array('fields' => $fields,
+			'contain' => $contain, 'conditions' => $conditions));
+		//echo debug($conditions);
+		//echo debug($doctors);
+		$this->set('result', $doctors);
+		if (isset($this->request->query['jsonp_callback'])) {
+			$this->autoLayout = $this->autoRender = false;
+			$this->set('callback', $this->request->query['jsonp_callback']);
+			$this->render('/layouts/jsonp');
+		} else {
+			$this->set('_serialize', 'result');
+		}
+	}
 }

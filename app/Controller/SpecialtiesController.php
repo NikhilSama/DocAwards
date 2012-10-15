@@ -123,7 +123,13 @@ class SpecialtiesController extends AppController {
 				'middle_name LIKE' => '%'.$term.'%',
 				'last_name LIKE' => '%'.$term.'%'))));
 		$this->set('result', $result);
-		$this->set('_serialize', 'result');
+		if (isset($this->request->query['jsonp_callback'])) {
+			$this->autoLayout = $this->autoRender = false;
+			$this->set('callback', $this->request->query['jsonp_callback']);
+			$this->render('/layouts/jsonp');
+		} else {
+			$this->set('_serialize', 'result');
+		}
 	}
 }
 

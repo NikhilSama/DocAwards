@@ -1,3 +1,9 @@
+-- Conusult Location Type
+INSERT INTO `consultlocationtypes` (`id`, `name`) VALUES
+(1, 'HOSPITAL'),
+(2, 'HOME_CLINIC'),
+(3, 'OPD CLINIC');
+
 
 --
 -- Dumping data for table `countries`
