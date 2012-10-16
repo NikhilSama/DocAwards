@@ -1287,21 +1287,21 @@ INSERT INTO `cities` (`id`, `name`, `lat`, `long`, `state`) VALUES
 (997, 'Pithoragarh', '29.58 N', '80.22 E', 'Uttaranchal'),
 (998, 'Rishikesh', '30.12 N', '78.29 E', 'Uttaranchal'),
 (999, 'Rudrapur', '', '', 'Uttaranchal'),
-(1000, 'Rurki', '29.87 N', '77.89 E', 'Uttaranchal');
+(1000, 'Rurki', '29.87 N', '77.89 E', 'Uttaranchal'),
+(1001, 'New York', '0', '0', 'New York');
 
 INSERT INTO `users` VALUES (1,'rashmisama','coolio','Doctor','2012-10-15 14:27:30','2012-10-15 14:27:30');
 INSERT INTO `consult_types` VALUES (3,'WALKIN','2012-10-15 14:36:01','2012-10-15 14:36:01'),(4,'SCHEDULE_APPOINTMENT','2012-10-15 14:36:11','2012-10-15 14:36:11');
 INSERT INTO `doctors` VALUES (1,1,'Rashmi','','Sama','profile_pics/SamaRashmifacebook_logo.jpg','f','1992-10-15',1999,'Trained at Columbia University, New York, Dr Rashmi Sama specializes in Chest/Pulmonary medicine', '2012-10-15 14:28:14','2012-10-15 14:28:14');
 INSERT INTO `diseases` VALUES (1,'COPD (Chronic Obstructive Lung Disease)','A disease in which patient finds it hard to breath','2012-10-15 14:48:59','2012-10-15 14:48:59');
 INSERT INTO `specialties` VALUES (1,'Pulmonology (Chest Medicine)','Specialise in diseases of the lung such as COPD, lung cancer, asthma, interstitial lung desease, cough etc','2012-10-15 14:47:50','2012-10-15 14:47:50'),(2,'Internal Medicine (General Physician)','Internal medicine is the medical specialty dealing with the prevention, diagnosis, and treatment of adult diseases.','2012-10-15 15:25:01','2012-10-15 15:25:01'),(3,'Critical Care','Intensive-care medicine or critical-care medicine is a branch of medicine concerned with the diagnosis and management of life threatening conditions requiring sophisticated organ support and invasive monitoring.','2012-10-15 15:25:37','2012-10-15 15:25:37');
-INSERT INTO `locations` VALUES (2,'Sama Chest Center','8 Siri Fort Road','Siri Fort', 28.635310000000,77.224960000000,278,102,2,'2012-10-15 14:30:36','2012-10-15 14:30:36'),(3,'Sir Ganga Ram Hospital','New Rajinder Nagar',28.638270000000,77.189840000000,278,102,3,'2012-10-15 14:31:27','2012-10-15 14:31:27'),(4,'St Lukes Rosevelt Hospital','1000 10th Avenue ',40.770030000000,-73.987580000000,1001,236,4,'2012-10-15 15:38:25','2012-10-15 15:38:25');
-INSERT INTO `degrees` VALUES (1,'MBBS',NULL,NULL),(2,'MD',NULL,NULL),(3,'Residency',NULL,NULL),(4,'Fellowship - Pulmonology',NULL,NULL);
+INSERT INTO `pin_codes` VALUES (2,'110049','2012-10-15 14:28:41','2012-10-15 14:28:41'),(3,'110060','2012-10-15 14:29:32','2012-10-15 14:29:32'),(4,'10019','2012-10-15 15:37:26','2012-10-15 15:37:26');
+INSERT INTO `locations` VALUES (2,'Sama Chest Center','8 Siri Fort Road','Siri Fort', 28.635310000000,77.224960000000,278,102,2,'2012-10-15 14:30:36','2012-10-15 14:30:36'),(3,'Sir Ganga Ram Hospital','New Rajinder Nagar','Rajinder Nagar', 28.638270000000,77.189840000000,278,102,3,'2012-10-15 14:31:27','2012-10-15 14:31:27'),(4,'St Lukes Rosevelt Hospital','1000 10th Avenue ','Upper West Side, NY', 40.770030000000,-73.987580000000,1001,236,4,'2012-10-15 15:38:25','2012-10-15 15:38:25');
 INSERT INTO `docconsultlocations` VALUES (1,2,1,1,'','2012-10-15 14:31:53','2012-10-15 14:31:53'),(2,3,1,1,'','2012-10-15 15:00:27','2012-10-15 15:00:27');
+INSERT INTO `specialtydiseaselinktypes` VALUES (1,'SPECIALIST','2012-10-15 14:49:19','2012-10-15 14:49:19');
 INSERT INTO `docspeclinks` VALUES (1,1,1,'2012-10-15 14:48:35','2012-10-15 14:48:35'),(2,1,3,'2012-10-15 15:25:44','2012-10-15 15:25:44'),(3,1,2,'2012-10-15 15:25:52','2012-10-15 15:25:52');
 INSERT INTO `doctor_contacts` VALUES (1,1,'personal','9971890707','rashmisama@gmail.com','2012-10-15 14:52:03','2012-10-15 14:52:03'),(2,1,'scheduling','9971930707','nikhilsama@gmail.com','2012-10-15 15:28:59','2012-10-15 15:28:59');
 INSERT INTO `dslinks` VALUES (1,1,1,1,'2012-10-15 14:49:24','2012-10-15 14:49:24');
 INSERT INTO `experiences` VALUES (1,'2002-10-15','2012-10-20','Pulmonology',1,2,'2012-10-15 14:40:28','2012-10-15 14:40:28'),(2,'1994-10-15','2012-10-20','',1,4,'2012-10-15 15:40:22','2012-10-15 15:40:22');
-INSERT INTO `pin_codes` VALUES (2,'110049','2012-10-15 14:28:41','2012-10-15 14:28:41'),(3,'110060','2012-10-15 14:29:32','2012-10-15 14:29:32'),(4,'10019','2012-10-15 15:37:26','2012-10-15 15:37:26');
 INSERT INTO `qualifications` VALUES (1,1,1,3,1999,'Internal Medicine','2012-10-15 14:39:36','2012-10-15 14:39:36'),(2,1,4,4,2006,'Internal Medicine','2012-10-15 15:38:46','2012-10-15 15:38:46');
-INSERT INTO `specialtydiseaselinktypes` VALUES (1,'SPECIALIST','2012-10-15 14:49:19','2012-10-15 14:49:19');
 INSERT INTO `consult_timings` VALUES (1,0,1,0,1,0,1,1,'14:38:00','19:38:00',3,1,'','','2012-10-15 14:39:01','2012-10-15 14:39:01'),(2,1,1,1,1,1,0,0,'15:00:00','20:00:00',3,2,'','','2012-10-15 15:00:51','2012-10-15 15:00:51');
