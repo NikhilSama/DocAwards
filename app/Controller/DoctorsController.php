@@ -217,7 +217,7 @@ class DoctorsController extends AppController {
 				  'Docconsultlocation' =>
 					array('fields' => array('addl'),
 					      'Consultlocationtype' => array('fields' => array('name')),
-					      'Location' => array('fields' => array('id', 'name', 'address', 'lat', 'long'),
+					      'Location' => array('fields' => array('id', 'name', 'address', 'neighborhood', 'lat', 'long'),
 							  'Country' => array('fields' => array('name')),
 							  'City' => array('fields' => array('name')),
 							  'PinCode' => array('fields' => array('pin_code'))),
@@ -245,7 +245,7 @@ class DoctorsController extends AppController {
 				);
 		
 
-		$fields = array('id', 'first_name', 'middle_name', 'last_name');		
+		$fields = array('id', 'first_name', 'middle_name', 'last_name', 'one_line_intro', 'image');		
 		$doctors = $this->Doctor->find('all', array('fields' => $fields,
 			'contain' => $contain, 'conditions' => $conditions));
 		//echo debug($conditions);
