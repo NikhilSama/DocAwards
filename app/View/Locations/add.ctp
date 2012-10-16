@@ -5,6 +5,7 @@
 	<?php
 		echo $this->Form->input('name');
 		echo $this->Form->input('address');
+		echo $this->Form->input('neighborhood');
 		echo $this->Form->input('lat');
 		echo $this->Form->input('long');
 		echo $this->Form->input('city_id');

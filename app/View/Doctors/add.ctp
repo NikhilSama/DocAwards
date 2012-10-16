@@ -11,6 +11,7 @@
 		echo $this->Form->input('gender');
 		echo $this->Form->input('DOB');
 		echo $this->Form->input('first_yr_of_practice');
+		echo $this->Form->input('one_line_intro');
 	?>
 	</fieldset>
 <?php echo $this->Form->end(__('Submit')); ?>

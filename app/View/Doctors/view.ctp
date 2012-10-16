@@ -46,6 +46,11 @@
 			<?php echo h($doctor['Doctor']['first_yr_of_practice']); ?>
 			&nbsp;
 		</dd>
+		<dt><?php echo __('One Line Intro'); ?></dt>
+		<dd>
+			<?php echo h($doctor['Doctor']['one_line_intro']); ?>
+			&nbsp;
+		</dd>
 		<dt><?php echo __('Created'); ?></dt>
 		<dd>
 			<?php echo h($doctor['Doctor']['created']); ?>

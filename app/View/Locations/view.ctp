@@ -16,6 +16,11 @@
 			<?php echo h($location['Location']['address']); ?>
 			&nbsp;
 		</dd>
+		<dt><?php echo __('Neighborhood'); ?></dt>
+		<dd>
+			<?php echo h($location['Location']['neighborhood']); ?>
+			&nbsp;
+		</dd>
 		<dt><?php echo __('Latitude'); ?></dt>
 		<dd>
 			<?php echo h($location['Location']['lat']); ?>
