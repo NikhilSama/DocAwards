@@ -3,7 +3,7 @@
 	<dl>
 		<dt><?php echo __('It'); ?></dt>
 		<dd>
-			<?php echo h($consultType['ConsultType']['it']); ?>
+			<?php echo h($consultType['ConsultType']['id']); ?>
 			&nbsp;
 		</dd>
 		<dt><?php echo __('Name'); ?></dt>
@@ -26,8 +26,8 @@
 <div class="actions">
 	<h3><?php echo __('Actions'); ?></h3>
 	<ul>
-		<li><?php echo $this->Html->link(__('Edit Consult Type'), array('action' => 'edit', $consultType['ConsultType']['it'])); ?> </li>
-		<li><?php echo $this->Form->postLink(__('Delete Consult Type'), array('action' => 'delete', $consultType['ConsultType']['it']), null, __('Are you sure you want to delete # %s?', $consultType['ConsultType']['it'])); ?> </li>
+		<li><?php echo $this->Html->link(__('Edit Consult Type'), array('action' => 'edit', $consultType['ConsultType']['id'])); ?> </li>
+		<li><?php echo $this->Form->postLink(__('Delete Consult Type'), array('action' => 'delete', $consultType['ConsultType']['id']), null, __('Are you sure you want to delete # %s?', $consultType['ConsultType']['id'])); ?> </li>
 		<li><?php echo $this->Html->link(__('List Consult Types'), array('action' => 'index')); ?> </li>
 		<li><?php echo $this->Html->link(__('New Consult Type'), array('action' => 'add')); ?> </li>
 		<li><?php echo $this->Html->link(__('List Consult Timings'), array('controller' => 'consult_timings', 'action' => 'index')); ?> </li>

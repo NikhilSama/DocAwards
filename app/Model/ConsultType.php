@@ -12,7 +12,7 @@ class ConsultType extends AppModel {
  *
  * @var string
  */
-	public $primaryKey = 'it';
+	public $primaryKey = 'id';
 
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
