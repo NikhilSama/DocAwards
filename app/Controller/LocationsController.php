@@ -14,7 +14,18 @@ class LocationsController extends AppController {
  */
 	public function index() {
 		$this->Location->recursive = 0;
-		$this->set('locations', $this->paginate());
+		if (isset($this->params['ext']) && $this->params['ext'] == 'json') {
+			$this->set('result', $this->Location->find('list'));
+			if (isset($this->request->query['jsonp_callback'])) {
+				$this->autoLayout = $this->autoRender = false;
+				$this->set('callback', $this->request->query['jsonp_callback']);
+				$this->render('/Layouts/jsonp');
+			} else {
+				$this->set('_serialize', 'result');
+			}
+		} else {
+			$this->set('locations', $this->paginate());
+		}
 	}
 
 /**
@@ -40,11 +51,24 @@ class LocationsController extends AppController {
 	public function add() {
 		if ($this->request->is('post')) {
 			$this->Location->create();
-			if ($this->Location->save($this->request->data)) {
-				$this->Session->setFlash(__('The location has been saved'));
-				$this->redirect(array('action' => 'index'));
+			$result = false;
+			if ($this->Location->save($this->request->data)) $result = true;
+			if (isset($this->params['ext']) && $this->params['ext'] == 'json') {
+				$this->set('result', array('result' => $result));
+				if (isset($this->request->query['jsonp_callback'])) {
+					$this->autoLayout = $this->autoRender = false;
+					$this->set('callback', $this->request->query['jsonp_callback']);
+					$this->render('/Layouts/jsonp');
+				} else {
+					$this->set('_serialize', 'result');
+				}
 			} else {
-				$this->Session->setFlash(__('The location could not be saved. Please, try again.'));
+				if ($result) {
+					$this->Session->setFlash(__('The location has been saved'));
+					$this->redirect(array('action' => 'index'));
+				} else {
+					$this->Session->setFlash(__('The location could not be saved. Please, try again.'));
+				}
 			}
 		}
 		$cities = $this->Location->City->find('list');

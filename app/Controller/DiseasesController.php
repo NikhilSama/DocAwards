@@ -14,7 +14,18 @@ class DiseasesController extends AppController {
  */
 	public function index() {
 		$this->Disease->recursive = 0;
-		$this->set('diseases', $this->paginate());
+		if (isset($this->params['ext']) && $this->params['ext'] == 'json') {
+			$this->set('result', $this->Disease->find('list'));
+			if (isset($this->request->query['jsonp_callback'])) {
+				$this->autoLayout = $this->autoRender = false;
+				$this->set('callback', $this->request->query['jsonp_callback']);
+				$this->render('/Layouts/jsonp');
+			} else {
+				$this->set('_serialize', 'result');
+			}
+		} else {
+			$this->set('diseases', $this->paginate());
+		}
 	}
 
 /**

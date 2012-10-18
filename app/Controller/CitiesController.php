@@ -14,9 +14,19 @@ class CitiesController extends AppController {
  */
 	public function index() {
 		$this->City->recursive = 0;
-		$this->set('cities', $this->paginate());
+		if (isset($this->params['ext']) && $this->params['ext'] == 'json') {
+			$this->set('result', $this->City->find('list'));
+			if (isset($this->request->query['jsonp_callback'])) {
+				$this->autoLayout = $this->autoRender = false;
+				$this->set('callback', $this->request->query['jsonp_callback']);
+				$this->render('/Layouts/jsonp');
+			} else {
+				$this->set('_serialize', 'result');
+			}
+		} else {
+			$this->set('cities', $this->paginate());
+		}
 	}
-
 /**
  * view method
  *
@@ -30,6 +40,15 @@ class CitiesController extends AppController {
 			throw new NotFoundException(__('Invalid city'));
 		}
 		$this->set('city', $this->City->read(null, $id));
+		
+		if (isset($this->request->query['jsonp_callback'])) {
+			$this->autoLayout = $this->autoRender = false;
+			$this->set('callback', $this->request->query['jsonp_callback']);
+			$this->render('/Layouts/jsonp');
+		} else {
+			$this->set('_serialize', 'result');
+		}
+
 	}
 
 /**
@@ -40,11 +59,24 @@ class CitiesController extends AppController {
 	public function add() {
 		if ($this->request->is('post')) {
 			$this->City->create();
-			if ($this->City->save($this->request->data)) {
-				$this->Session->setFlash(__('The city has been saved'));
-				$this->redirect(array('action' => 'index'));
+			$result = false;
+			if ($this->City->save($this->request->data)) $result = true;
+			if (isset($this->params['ext']) && $this->params['ext'] == 'json') {
+				$this->set('result', array('result' => $result));
+				if (isset($this->request->query['jsonp_callback'])) {
+					$this->autoLayout = $this->autoRender = false;
+					$this->set('callback', $this->request->query['jsonp_callback']);
+					$this->render('/Layouts/jsonp');
+				} else {
+					$this->set('_serialize', 'result');
+				}
 			} else {
-				$this->Session->setFlash(__('The city could not be saved. Please, try again.'));
+				if ($result) {
+					$this->Session->setFlash(__('The city has been saved'));
+					$this->redirect(array('action' => 'index'));
+				} else {
+					$this->Session->setFlash(__('The city could not be saved. Please, try again.'));
+				}
 			}
 		}
 	}
