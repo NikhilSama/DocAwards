@@ -29,7 +29,27 @@ class DoctorsController extends AppController {
 		if (!$this->Doctor->exists()) {
 			throw new NotFoundException(__('Invalid doctor'));
 		}
+		$this->Doctor->recursive = 2;
+		echo debug($this->Doctor->read(null, $id));
 		$this->set('doctor', $this->Doctor->read(null, $id));
+	}
+
+	public function ws_add() {
+		if ($this->request->is('post')) {
+                        $this->log($this->request->data['Doctor']);
+			if (isset($this->request->data['Doctor']['image'])) {	
+				$file_name
+                        	= 'profile_pics/'.$this->request->data['Doctor']['last_name'].$this->request->data['Doctor']['first_name'].
+                        	str_replace(" ","_", $this->request->data['Doctor']['image']['name']);
+                        	copy($this->request->data['Doctor']['image']['tmp_name'], $file_name);
+                        	$this->request->data['Doctor']['image'] = $file_name;
+                        }
+			$this->Doctor->create();
+                        if ($this->Doctor->saveAssociated($this->request->data)) {
+		              $this->set('doctor', $this->Doctor->read('id', $this->Doctor->getLastInsertID()));
+			      $this->set('_serialize', 'doctor');
+			}
+		}
 	}
 
 /**

@@ -7,6 +7,12 @@ App::uses('AppController', 'Controller');
  */
 class UsersController extends AppController {
 
+
+    public function beforeFilter() {
+        $this->Auth->allow('backbone_add', 'backbone_login', 'ajax_login', 'index', 'view', 'add');
+    }
+
+
 /**
  * index method
  *
@@ -49,6 +55,17 @@ class UsersController extends AppController {
 		}
 	}
 
+	public function backbone_add() {
+		 if ($this->request->is('post')) {
+                        $this->User->create();
+                        if ($this->User->save($this->request->data)) {
+				if ($this->Auth->login()) {
+                			$this->log("sending to ".$this->request->data['success_redirect'].'?user_id='.$this->Auth->user('id'));
+            				$this->redirect($this->request->data['success_redirect'].'?user_id='.$this->Auth->user('id'));
+                        	}
+			}
+                }
+	}
 /**
  * edit method
  *
@@ -96,4 +113,56 @@ class UsersController extends AppController {
 		$this->Session->setFlash(__('User was not deleted'));
 		$this->redirect(array('action' => 'index'));
 	}
+
+public function login() {
+    if ($this->request->is('post')) {
+        $this->log($this->request->data);
+
+        if ($this->Auth->login()) {
+            $this->redirect($this->Auth->redirect());
+        } else {
+            $this->Session->setFlash(__('Invalid username or password, try again'));
+        }
+    }
 }
+
+
+public function backbone_login() {
+    if ($this->request->is('post')) {
+        $this->log($this->request->data);
+
+        if ($this->Auth->login()) {
+		$this->log("sending to ".$this->request->data['success_redirect'].'?user_id='.$this->Auth->user('id'));
+            $this->redirect($this->request->data['success_redirect'].'?user_id='.$this->Auth->user('id'));
+        } else {
+            $this->Session->setFlash(__('Invalid username or password, try again'));
+        }
+    }
+}
+
+
+public function logout() {
+    $this->redirect($this->Auth->logout());
+}
+
+public function ajax_login() {
+    if ($this->request->is('post')) {
+	$this->log($this->request->data); 
+       if ($this->Auth->login()) {
+		$this->set('user', $this->User->read('id', $this->Auth->user('id')));
+		$this->set('_serialize', 'user');
+        } else {
+        	$this->set('user', -1);
+		$this->set('_serialize', 'user');
+	}
+    }
+}
+
+public function get_user_id() {
+	$this->set('user_id', $this->Auth->user('id'));
+	$this->set('_serialize', 'user_id');
+}
+
+
+}
+
