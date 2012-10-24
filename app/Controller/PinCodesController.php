@@ -14,7 +14,18 @@ class PinCodesController extends AppController {
  */
 	public function index() {
 		$this->PinCode->recursive = 0;
-		$this->set('pinCodes', $this->paginate());
+		if (isset($this->params['ext']) && $this->params['ext'] == 'json') {
+			$this->set('result', $this->PinCode->find('list'));
+			if (isset($this->request->query['jsonp_callback'])) {
+				$this->autoLayout = $this->autoRender = false;
+				$this->set('callback', $this->request->query['jsonp_callback']);
+				$this->render('/Layouts/jsonp');
+			} else {
+				$this->set('_serialize', 'result');
+			}
+		} else {
+			$this->set('pinCodes', $this->paginate());
+		}
 	}
 
 /**
@@ -40,11 +51,24 @@ class PinCodesController extends AppController {
 	public function add() {
 		if ($this->request->is('post')) {
 			$this->PinCode->create();
-			if ($this->PinCode->save($this->request->data)) {
-				$this->Session->setFlash(__('The pin code has been saved'));
-				$this->redirect(array('action' => 'index'));
-			} else {
-				$this->Session->setFlash(__('The pin code could not be saved. Please, try again.'));
+			$result = false; 
+			if ($this->PinCode->save($this->request->data)) $result = true;
+			if (isset($this->params['ext']) && $this->params['ext'] == 'json') {
+				$this->set('result', array('result' => $result));
+				if (isset($this->request->query['jsonp_callback'])) {
+					$this->autoLayout = $this->autoRender = false;
+					$this->set('callback', $this->request->query['jsonp_callback']);
+					$this->render('/Layouts/jsonp');
+				} else {
+					$this->set('_serialize', 'result');
+				}
+			} else {	
+				if ($result) {
+					$this->Session->setFlash(__('The pin code has been saved'));
+					$this->redirect(array('action' => 'index'));
+				} else {
+					$this->Session->setFlash(__('The pin code could not be saved. Please, try again.'));
+				}
 			}
 		}
 	}

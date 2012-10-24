@@ -14,7 +14,18 @@ class DegreesController extends AppController {
  */
 	public function index() {
 		$this->Degree->recursive = 0;
-		$this->set('degrees', $this->paginate());
+		if (isset($this->params['ext']) && $this->params['ext'] == 'json') {
+			$this->set('result', $this->Degree->find('list'));
+			if (isset($this->request->query['jsonp_callback'])) {
+				$this->autoLayout = $this->autoRender = false;
+				$this->set('callback', $this->request->query['jsonp_callback']);
+				$this->render('/Layouts/jsonp');
+			} else {
+				$this->set('_serialize', 'result');
+			}
+		} else {
+			$this->set('degrees', $this->paginate());
+		}		
 	}
 
 /**
@@ -40,11 +51,24 @@ class DegreesController extends AppController {
 	public function add() {
 		if ($this->request->is('post')) {
 			$this->Degree->create();
-			if ($this->Degree->save($this->request->data)) {
-				$this->Session->setFlash(__('The degree has been saved'));
-				$this->redirect(array('action' => 'index'));
+			$result = false;
+			if ($this->Degree->save($this->request->data)) $result = true;
+			if (isset($this->params['ext']) && $this->params['ext'] == 'json') {
+				$this->set('result', array('result' => $result));
+				if (isset($this->request->query['jsonp_callback'])) {
+					$this->autoLayout = $this->autoRender = false;
+					$this->set('callback', $this->request->query['jsonp_callback']);
+					$this->render('/Layouts/jsonp');
+				} else {
+					$this->set('_serialize', 'result');
+				}
 			} else {
-				$this->Session->setFlash(__('The degree could not be saved. Please, try again.'));
+				if ($result) {
+					$this->Session->setFlash(__('The degree has been saved'));
+					$this->redirect(array('action' => 'index'));
+				} else {
+					$this->Session->setFlash(__('The degree could not be saved. Please, try again.'));
+				}
 			}
 		}
 	}

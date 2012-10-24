@@ -14,7 +14,18 @@ class SpecialtiesController extends AppController {
  */
 	public function index() {
 		$this->Specialty->recursive = 0;
-		$this->set('specialties', $this->paginate());
+		if (isset($this->params['ext']) && $this->params['ext'] == 'json') {
+			$this->set('result', $this->Specialty->find('list'));
+			if (isset($this->request->query['jsonp_callback'])) {
+				$this->autoLayout = $this->autoRender = false;
+				$this->set('callback', $this->request->query['jsonp_callback']);
+				$this->render('/Layouts/jsonp');
+			} else {
+				$this->set('_serialize', 'result');
+			}
+		} else {
+			$this->set('specialties', $this->paginate());
+		}
 	}
 
 /**
@@ -29,7 +40,18 @@ class SpecialtiesController extends AppController {
 		if (!$this->Specialty->exists()) {
 			throw new NotFoundException(__('Invalid specialty'));
 		}
-		$this->set('specialty', $this->Specialty->read(null, $id));
+		if (isset($this->params['ext']) && $this->params['ext'] == 'json') {
+			$this->set('result', $this->Specialty->read(null, $id));
+			if (isset($this->request->query['jsonp_callback'])) {
+				$this->autoLayout = $this->autoRender = false;
+				$this->set('callback', $this->request->query['jsonp_callback']);
+				$this->render('/Layouts/jsonp');
+			} else {
+				$this->set('_serialize', 'result');
+			}
+		} else {
+			$this->set('specialty', $this->Specialty->read(null, $id));
+		}
 	}
 
 /**
@@ -40,11 +62,25 @@ class SpecialtiesController extends AppController {
 	public function add() {
 		if ($this->request->is('post')) {
 			$this->Specialty->create();
-			if ($this->Specialty->save($this->request->data)) {
-				$this->Session->setFlash(__('The specialty has been saved'));
-				$this->redirect(array('action' => 'index'));
+			$result = false;
+			if ($this->Specialty->save($this->request->data)) $result = true;
+			
+			if (isset($this->params['ext']) && $this->params['ext'] == 'json') {
+				$this->set('result', array('result' => $result));
+				if (isset($this->request->query['jsonp_callback'])) {
+					$this->autoLayout = $this->autoRender = false;
+					$this->set('callback', $this->request->query['jsonp_callback']);
+					$this->render('/Layouts/jsonp');
+				} else {
+					$this->set('_serialize', 'result');
+				}
 			} else {
-				$this->Session->setFlash(__('The specialty could not be saved. Please, try again.'));
+				if ($result) {
+					$this->Session->setFlash(__('The specialty has been saved'));
+					$this->redirect(array('action' => 'index'));
+				} else {
+					$this->Session->setFlash(__('The specialty could not be saved. Please, try again.'));
+				}
 			}
 		}
 	}
@@ -62,11 +98,25 @@ class SpecialtiesController extends AppController {
 			throw new NotFoundException(__('Invalid specialty'));
 		}
 		if ($this->request->is('post') || $this->request->is('put')) {
-			if ($this->Specialty->save($this->request->data)) {
-				$this->Session->setFlash(__('The specialty has been saved'));
-				$this->redirect(array('action' => 'index'));
+			$result = false;
+			if ($this->Specialty->save($this->request->data)) $result = true;
+			
+			if (isset($this->params['ext']) && $this->params['ext'] == 'json') {
+				$this->set('result', array('result' => $result));
+				if (isset($this->request->query['jsonp_callback'])) {
+					$this->autoLayout = $this->autoRender = false;
+					$this->set('callback', $this->request->query['jsonp_callback']);
+					$this->render('/Layouts/jsonp');
+				} else {
+					$this->set('_serialize', 'result');
+				}
 			} else {
-				$this->Session->setFlash(__('The specialty could not be saved. Please, try again.'));
+				if ($result) {
+					$this->Session->setFlash(__('The specialty has been saved'));
+					$this->redirect(array('action' => 'index'));
+				} else {
+					$this->Session->setFlash(__('The specialty could not be saved. Please, try again.'));
+				}
 			}
 		} else {
 			$this->request->data = $this->Specialty->read(null, $id);
@@ -89,7 +139,19 @@ class SpecialtiesController extends AppController {
 		if (!$this->Specialty->exists()) {
 			throw new NotFoundException(__('Invalid specialty'));
 		}
-		if ($this->Specialty->delete()) {
+		$result = false;
+		if ($this->Specialty->delete()) $result = true;
+		
+		if (isset($this->params['ext']) && $this->params['ext'] == 'json') {
+			$this->set('result', array('result' => $result));
+			if (isset($this->request->query['jsonp_callback'])) {
+				$this->autoLayout = $this->autoRender = false;
+				$this->set('callback', $this->request->query['jsonp_callback']);
+				$this->render('/Layouts/jsonp');
+			} else {
+				$this->set('_serialize', 'result');
+			}
+		} else {
 			$this->Session->setFlash(__('Specialty deleted'));
 			$this->redirect(array('action' => 'index'));
 		}
@@ -111,6 +173,7 @@ class SpecialtiesController extends AppController {
 				'middle_name LIKE' => '%'.$term.'%',
 				'last_name LIKE' => '%'.$term.'%'));
 		} else {
+			//Return all specialties and doctors and diseases
 			$specialties_disease_conditions = $doctors_conditions = array();
 		}
 		
