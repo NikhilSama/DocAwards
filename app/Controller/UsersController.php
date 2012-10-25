@@ -159,8 +159,10 @@ public function ajax_login() {
 }
 
 public function get_user_id() {
-	$this->set('user_id', $this->Auth->user('id'));
-	$this->set('_serialize', 'user_id');
+	$this->set('user', $this->User->find('first', array(
+		'conditions' => array('id' => $this->Auth->user('id')),
+		'contain'	 => array('Doctor'))));
+	$this->set('_serialize', 'user');
 }
 
 

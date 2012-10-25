@@ -52,6 +52,25 @@ class DoctorsController extends AppController {
 		}
 	}
 
+	public function iframe_add_image() {
+		$this->layout = 'onlyview';
+		if ($this->request->is('post') || $this->request->is('put')) {
+			$file_name
+			= 'profile_pics/'.$this->request->data['Doctor']['last_name'].$this->request->data['Doctor']['first_name'].
+			str_replace(" ","_", $this->request->data['Doctor']['image']['name']);
+			copy($this->request->data['Doctor']['image']['tmp_name'], $file_name);
+			$this->request->data['Doctor']['image'] = $file_name;
+			$this->Doctor->create();
+			if ($this->Doctor->save($this->request->data)) {
+				echo "Saved";
+			} else {
+				echo "Unable to Save.  Please try again";
+			}
+		} else {
+			echo "not pst";
+			$this->request->data = $this->Doctor->find('first', array('conditions' => array('user_id' => $this->Auth->user('id'))));
+		}
+	}
 /**
  * add method
  *
