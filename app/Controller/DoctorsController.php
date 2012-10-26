@@ -162,6 +162,7 @@ class DoctorsController extends AppController {
 		$doctor_id = isset($this->request->query['doctor_id']) ? $this->request->query['doctor_id'] : null;
 		$lat = isset($this->request->query['latitude']) ? $this->request->query['latitude'] : null;
 		$long = isset($this->request->query['longitude']) ? $this->request->query['longitude'] : null;
+		$brief = isset($this->request->query['brief']) ? true : false;
 		$conditions = $doc_ids_to_get_geo = $doc_ids_to_get_dis = $doc_ids_to_get_sp = array();
 
 
@@ -252,44 +253,103 @@ class DoctorsController extends AppController {
 			if (($lat && $long) || $disease_id || $specialty_id) $conditions = array('Doctor.id' => $doc_ids_to_get);
 		}
 		
-		$contain = array (
-				  'Docconsultlocation' =>
-					array('fields' => array('addl'),
-					      'Consultlocationtype' => array('fields' => array('name')),
-					      'Location' => array('fields' => array('id', 'name', 'address', 'neighborhood', 'lat', 'long'),
-							  'Country' => array('fields' => array('name')),
-							  'City' => array('fields' => array('name')),
-							  'PinCode' => array('fields' => array('pin_code'))),
-					      'ConsultTiming' => array('ConsultType' => array('fields' => array('name'))),
-				      ),
-				'Docspeclink' =>
-					array('fields' => array('id'),
-					      'Specialty' => array('fields' => array('name', 'description'))),
-				'Qualification' =>
-					array('fields' => array('id'),
-					      'Location' => array(
-						'fields' => array('name', 'address', 'lat', 'long'),
-						'City' => array('fields'=>array('name')), 'Country'=> array('fields'=>array('name')),
-						'PinCode' => array('fields' => array('pin_code'))),
-					      'Degree' => array('fields' => array('name'))
+		if ($brief) {
+			$contain = array (
+					  'Docconsultlocation' =>
+							array('fields' => array('addl'),
+						      'Location' => array('fields' => array('id', 'name', 'address', 'neighborhood'),
+								  				  'Country' => array('fields' => array('name')),
+												  'City' => array('fields' => array('name')),
+												  'PinCode' => array('fields' => array('pin_code')))),
+		   				'Docspeclink' => array('fields' => array('id'),
+						      				   'Specialty' => array('fields' => array('name', 'description'))));
+		} else {
+			$contain = array (
+					  'Docconsultlocation' =>
+						array('fields' => array('addl'),
+						      'Consultlocationtype' => array('fields' => array('name')),
+						      'Location' => array('fields' => array('id', 'name', 'address', 'neighborhood', 'lat', 'long'),
+								  'Country' => array('fields' => array('name')),
+								  'City' => array('fields' => array('name')),
+								  'PinCode' => array('fields' => array('pin_code'))),
+						      'ConsultTiming' => array('ConsultType' => array('fields' => array('name'))),
 					      ),
-				'Experience' =>
-					array('fields' => array('from', 'to', 'dept'),
-					      'Location' => array(
-						'fields' => array('name', 'address', 'lat', 'long'),
-						'City' => array('fields'=>array('name')), 'Country'=> array('fields'=>array('name')),
-						'PinCode' => array('fields' => array('pin_code')))),
-				'DoctorContact' =>
-					array('fields' => array('phone', 'email'))
-				);
-		
+					'Docspeclink' =>
+						array('fields' => array('id'),
+						      'Specialty' => array('fields' => array('name', 'description'))),
+					'Qualification' =>
+						array('fields' => array('id'),
+						      'Location' => array(
+							'fields' => array('name', 'address', 'lat', 'long'),
+							'City' => array('fields'=>array('name')), 'Country'=> array('fields'=>array('name')),
+							'PinCode' => array('fields' => array('pin_code'))),
+						      'Degree' => array('fields' => array('name'))
+						      ),
+					'Experience' =>
+						array('fields' => array('from', 'to', 'dept'),
+						      'Location' => array(
+							'fields' => array('name', 'address', 'lat', 'long'),
+							'City' => array('fields'=>array('name')), 'Country'=> array('fields'=>array('name')),
+							'PinCode' => array('fields' => array('pin_code')))),
+					'DoctorContact' =>
+						array('fields' => array('phone', 'email'))
+					);
+		}		
 
 		$fields = array('id', 'first_name', 'middle_name', 'last_name', 'one_line_intro', 'image');		
 		$doctors = $this->Doctor->find('all', array('fields' => $fields,
 			'contain' => $contain, 'conditions' => $conditions));
 		//echo debug($conditions);
 		//echo debug($doctors);
-		$this->set('result', $doctors);
+		if ($brief) {
+			$result = array();
+
+			foreach($doctors as $doctor) {
+			// Doc can have many specialties, return the one the user searched for 
+			// If no specialty id then return the first specialty
+			$specialty_tool_tip = "Specializes in ";
+			foreach($doctor['Docspeclink'] as $link) {
+				$specialty_tool_tip .= ($link['Specialty']['name'].', ');
+				if ($specialty_id && 
+					$link['specialty_id'] == $specialty_id) {
+						$specialty = $link['Specialty']['name'];
+					}
+				}
+				$specialty_tool_tip = chop($specialty_tool_tip, ', ');
+
+				if (!isset($specialty) || !$specialty) {
+					$specialty = $doctor['Docspeclink'][0]['Specialty']['name'];
+				}
+
+				if (sizeof($doctor['Docspeclink']) > 1) {
+					$specialty .= (" (+".(sizeof($doctor['Docspeclink']) - 1).")");
+				}
+
+				$location_tool_tip = "Located in ";
+				foreach($doctor['Docconsultlocation'] as $link) {
+					$location_tool_tip .= $link['Location']['neighborhood'].', '.$link['Location']['City']['name']. ' | ';
+				}
+				$location_tool_tip = chop($location_tool_tip, ' | ');
+
+				$location = $doctor['Docconsultlocation'][0]['Location']['neighborhood'];
+
+				if (sizeof($doctor['Docconsultlocation']) > 1) {
+					$location .= " (+".(sizeof($doctor['Docconsultlocation']) - 1).")";
+				}
+
+				array_push($result, array(
+					'name'  			=> 'Dr. '.$doctor['Doctor']['first_name'].' '.$doctor['Doctor']['last_name'],
+					'image' 			=> IMAGE_BASE.$doctor['Doctor']['image'],
+					'one_line_intro' 	=> $doctor['Doctor']['one_line_intro'],
+					'specialty'			=> $specialty,
+					'specialty_tool_tip'=> $specialty_tool_tip,
+					'location'			=> $location,
+					'location_tool_tip' => $location_tool_tip));
+			}
+			$this->set('result', $result);
+		} else {
+			$this->set('result', $doctors);			
+		}
 		if (isset($this->request->query['jsonp_callback'])) {
 			$this->autoLayout = $this->autoRender = false;
 			$this->set('callback', $this->request->query['jsonp_callback']);
