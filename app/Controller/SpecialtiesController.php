@@ -7,6 +7,10 @@ App::uses('AppController', 'Controller');
  */
 class SpecialtiesController extends AppController {
 
+    public function beforeFilter() {
+        $this->Auth->allow('autocomplete');
+    }
+
 /**
  * index method
  *
@@ -63,7 +67,7 @@ class SpecialtiesController extends AppController {
 		if ($this->request->is('post')) {
 			$this->Specialty->create();
 			$result = false;
-			if ($this->Specialty->save($this->request->data)) $result = true;
+			if ($this->Specialty->save($this->request->data)) $result = $this->Specialty->find('list'); 
 			
 			if (isset($this->params['ext']) && $this->params['ext'] == 'json') {
 				$this->set('result', array('result' => $result));

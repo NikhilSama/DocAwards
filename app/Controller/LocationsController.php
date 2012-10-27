@@ -52,7 +52,7 @@ class LocationsController extends AppController {
 		if ($this->request->is('post')) {
 			$this->Location->create();
 			$result = false;
-			if ($this->Location->save($this->request->data)) $result = true;
+			if ($this->Location->save($this->request->data)) $result = $this->Location->find('list'); 
 			if (isset($this->params['ext']) && $this->params['ext'] == 'json') {
 				$this->set('result', array('result' => $result));
 				if (isset($this->request->query['jsonp_callback'])) {

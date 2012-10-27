@@ -61,7 +61,7 @@ class UsersController extends AppController {
                         if ($this->User->save($this->request->data)) {
 				if ($this->Auth->login()) {
                 			$this->log("sending to ".$this->request->data['success_redirect'].'?user_id='.$this->Auth->user('id'));
-            				$this->redirect($this->request->data['success_redirect'].'?user_id='.$this->Auth->user('id'));
+            				$this->redirect($this->referer());
                         	}
 			}
                 }
@@ -133,7 +133,7 @@ public function backbone_login() {
 
         if ($this->Auth->login()) {
 		$this->log("sending to ".$this->request->data['success_redirect'].'?user_id='.$this->Auth->user('id'));
-            $this->redirect($this->request->data['success_redirect'].'?user_id='.$this->Auth->user('id'));
+            $this->redirect($this->referer());
         } else {
             $this->Session->setFlash(__('Invalid username or password, try again'));
         }

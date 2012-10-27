@@ -7,6 +7,11 @@ App::uses('AppController', 'Controller');
  */
 class DoctorsController extends AppController {
 
+    public function beforeFilter() {
+        $this->Auth->allow('get_doctors');
+    }
+
+
 /**
  * index method
  *
@@ -45,7 +50,7 @@ class DoctorsController extends AppController {
                         	$this->request->data['Doctor']['image'] = $file_name;
                         }
 			$this->Doctor->create();
-                        if ($this->Doctor->saveAssociated($this->request->data)) {
+                        if ($this->Doctor->saveAssociated($this->request->data, array( 'deep' => true) )) {
 		              $this->set('doctor', $this->Doctor->read('id', $this->Doctor->getLastInsertID()));
 			      $this->set('_serialize', 'doctor');
 			}
@@ -338,6 +343,7 @@ class DoctorsController extends AppController {
 				}
 
 				array_push($result, array(
+					'id'				=> $doctor['Doctor']['id'],
 					'name'  			=> 'Dr. '.$doctor['Doctor']['first_name'].' '.$doctor['Doctor']['last_name'],
 					'image' 			=> IMAGE_BASE.$doctor['Doctor']['image'],
 					'one_line_intro' 	=> $doctor['Doctor']['one_line_intro'],
