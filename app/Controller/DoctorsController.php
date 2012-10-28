@@ -162,6 +162,7 @@ class DoctorsController extends AppController {
 	}
 	
 	public function get_doctors() {
+		$result = array('status' => 1, 'message' => '', 'data' => array());
 		$disease_id = isset($this->request->query['disease_id']) ? $this->request->query['disease_id'] : null;
 		$specialty_id = isset($this->request->query['specialty_id']) ? $this->request->query['specialty_id'] : null;
 		$doctor_id = isset($this->request->query['doctor_id']) ? $this->request->query['doctor_id'] : null;

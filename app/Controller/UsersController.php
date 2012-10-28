@@ -9,7 +9,7 @@ class UsersController extends AppController {
 
 
     public function beforeFilter() {
-        $this->Auth->allow('backbone_add', 'backbone_login', 'ajax_login', 'index', 'view', 'add');
+        $this->Auth->allow('backbone_add', 'backbone_login', 'get_user', 'ajax_login', 'index', 'view', 'add');
     }
 
 
@@ -158,11 +158,17 @@ public function ajax_login() {
     }
 }
 
-public function get_user_id() {
-	$this->set('user', $this->User->find('first', array(
-		'conditions' => array('id' => $this->Auth->user('id')),
-		'contain'	 => array('Doctor'))));
-	$this->set('_serialize', 'user');
+public function get_user() {
+	if ($this->Auth->user('id')) {
+		$result['status'] = 1;
+		$result['data'] = $this->User->find('first', array(
+			'conditions' => array('id' => $this->Auth->user('id')),
+			'contain'	 => array('Doctor')));
+	} else {
+		$result['status'] = 0;
+	}
+	$this->set('result', $result);
+	$this->set('_serialize', 'result');
 }
 
 

@@ -7,6 +7,10 @@ App::uses('AppController', 'Controller');
  */
 class PinCodesController extends AppController {
 
+    public function beforeFilter() {
+        $this->Auth->allow('autocomplete');
+    }
+
 /**
  * index method
  *
@@ -119,5 +123,46 @@ class PinCodesController extends AppController {
 		}
 		$this->Session->setFlash(__('Pin code was not deleted'));
 		$this->redirect(array('action' => 'index'));
+	}
+	public function autocomplete() {
+		$result = array('status' => 1, 'message' => '', 'data' => array());
+		$term = isset($this->request->query['term']) ? $this->request->query['term'] : null;
+		$conditions = array(); 
+
+		if ($term) {
+			if (is_numeric($term)) {
+				$conditions = array('pin_code LIKE' => $term.'%');
+			} else {
+				$conditions = array("OR" => array(
+					'state LIKE' => '%'.$term.'%',
+					'Region2 LIKE' => '%'.$term.'%',
+					'Region3 LIKE' => '%'.$term.'%',
+					'city LIKE' => '%'.$term.'%',
+					'Area1 LIKE' => '%'.$term.'%',
+					'Area2 LIKE' => '%'.$term.'%',
+					'Region4 LIKE' => '%'.$term.'%'));
+			}
+		} else {
+			$result['status'] = 0;
+			$result['message'] = 'Please specify a search term.';
+		}
+
+		if ($result['status']) {
+		
+			$fields = array('pin_code', 'state', 'Region2', 'Region3', 'Region4', 'city', 'Area1', 'Area2');
+			$this->PinCode->recursive = -1;
+			$result['data'] = $this->PinCode->find('all', array(
+				'conditions' => $conditions, 
+				'fields' => $fields, 'limit' => 1000));
+		}
+
+		$this->set('result', $result);
+		if (isset($this->request->query['jsonp_callback'])) {
+			$this->autoLayout = $this->autoRender = false;
+			$this->set('callback', $this->request->query['jsonp_callback']);
+			$this->render('/Layouts/jsonp');
+		} else {
+			$this->set('_serialize', 'result');
+		}
 	}
 }
