@@ -60,7 +60,6 @@ class UsersController extends AppController {
                         $this->User->create();
                         if ($this->User->save($this->request->data)) {
 				if ($this->Auth->login()) {
-                			$this->log("sending to ".$this->request->data['success_redirect'].'?user_id='.$this->Auth->user('id'));
             				$this->redirect($this->referer());
                         	}
 			}
@@ -116,7 +115,6 @@ class UsersController extends AppController {
 
 public function login() {
     if ($this->request->is('post')) {
-        $this->log($this->request->data);
 
         if ($this->Auth->login()) {
             $this->redirect($this->Auth->redirect());
@@ -129,10 +127,8 @@ public function login() {
 
 public function backbone_login() {
     if ($this->request->is('post')) {
-        $this->log($this->request->data);
 
         if ($this->Auth->login()) {
-		$this->log("sending to ".$this->request->data['success_redirect'].'?user_id='.$this->Auth->user('id'));
             $this->redirect($this->referer());
         } else {
             $this->Session->setFlash(__('Invalid username or password, try again'));
@@ -147,7 +143,6 @@ public function logout() {
 
 public function ajax_login() {
     if ($this->request->is('post')) {
-	$this->log($this->request->data); 
        if ($this->Auth->login()) {
 		$this->set('user', $this->User->read('id', $this->Auth->user('id')));
 		$this->set('_serialize', 'user');
@@ -166,6 +161,7 @@ public function get_user() {
 			'contain'	 => array('Doctor')));
 	} else {
 		$result['status'] = 0;
+		$result['name'] = 'You are not logged in';
 	}
 	$this->set('result', $result);
 	$this->set('_serialize', 'result');
