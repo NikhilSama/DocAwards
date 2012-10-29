@@ -8,7 +8,7 @@ App::uses('AppController', 'Controller');
 class DoctorsController extends AppController {
 
     public function beforeFilter() {
-        $this->Auth->allow('get_doctors');
+        $this->Auth->allow('get_doctors', 'ws_add');
     }
 
 
@@ -40,8 +40,10 @@ class DoctorsController extends AppController {
 	}
 
 	public function ws_add() {
+		$result['code'] = 0;
+
 		if ($this->request->is('post')) {
-                        $this->log($this->request->data['Doctor']);
+            $this->log($this->request->data['Doctor']);
 			if (isset($this->request->data['Doctor']['image'])) {	
 				$file_name
                         	= 'profile_pics/'.$this->request->data['Doctor']['last_name'].$this->request->data['Doctor']['first_name'].
@@ -50,11 +52,17 @@ class DoctorsController extends AppController {
                         	$this->request->data['Doctor']['image'] = $file_name;
                         }
 			$this->Doctor->create();
-                        if ($this->Doctor->saveAssociated($this->request->data, array( 'deep' => true) )) {
-		              $this->set('doctor', $this->Doctor->read('id', $this->Doctor->getLastInsertID()));
-			      $this->set('_serialize', 'doctor');
+            if ($this->Doctor->saveAssociated($this->request->data, array( 'deep' => true) )) {
+		    	$result['code'] = 200;
+		    	$result['data'] =  $this->Doctor->read('id', $this->Doctor->getLastInsertID());
+			} else {
+				$result['name'] = $this->Session->read('Message.flash');
 			}
+		} else {
+			$result['name'] = "No post data found"; 
 		}
+		$this->set('result', $result);
+		$this->set('_serialize', 'result');
 	}
 
 	public function iframe_add_image() {
@@ -162,7 +170,7 @@ class DoctorsController extends AppController {
 	}
 	
 	public function get_doctors() {
-		$result = array('status' => 1, 'message' => '', 'data' => array());
+		$result = array('code' => 0, 'name' => '', 'data' => array());
 		$disease_id = isset($this->request->query['disease_id']) ? $this->request->query['disease_id'] : null;
 		$specialty_id = isset($this->request->query['specialty_id']) ? $this->request->query['specialty_id'] : null;
 		$doctor_id = isset($this->request->query['doctor_id']) ? $this->request->query['doctor_id'] : null;
@@ -308,7 +316,6 @@ class DoctorsController extends AppController {
 		//echo debug($conditions);
 		//echo debug($doctors);
 		if ($brief) {
-			$result = array();
 
 			foreach($doctors as $doctor) {
 			// Doc can have many specialties, return the one the user searched for 
@@ -343,7 +350,7 @@ class DoctorsController extends AppController {
 					$location .= " (+".(sizeof($doctor['Docconsultlocation']) - 1).")";
 				}
 
-				array_push($result, array(
+				array_push($result['data'], array(
 					'id'				=> $doctor['Doctor']['id'],
 					'name'  			=> 'Dr. '.$doctor['Doctor']['first_name'].' '.$doctor['Doctor']['last_name'],
 					'image' 			=> IMAGE_BASE.$doctor['Doctor']['image'],
@@ -353,10 +360,13 @@ class DoctorsController extends AppController {
 					'location'			=> $location,
 					'location_tool_tip' => $location_tool_tip));
 			}
-			$this->set('result', $result);
+			$result['code'] = '200';
 		} else {
-			$this->set('result', $doctors);			
+			$result['code'] = '200';
+			$result['data'] = $doctors;
 		}
+
+		$this->set('result', $result);
 		if (isset($this->request->query['jsonp_callback'])) {
 			$this->autoLayout = $this->autoRender = false;
 			$this->set('callback', $this->request->query['jsonp_callback']);

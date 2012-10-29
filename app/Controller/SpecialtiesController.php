@@ -165,7 +165,7 @@ class SpecialtiesController extends AppController {
 	
 	public function autocomplete () {
 		$term = isset($this->request->query['term']) ? $this->request->query['term'] : null;
-		$result['search_term'] = $term;
+		$result = array('code' => '200', 'name' => '', 'search_term' => $term, 'data' => array());
 		
 		if ($term) {
 			$specialties_disease_conditions = array("OR" => array(
@@ -182,17 +182,17 @@ class SpecialtiesController extends AppController {
 		}
 		
 		$this->Specialty->recursive = -1;
-		$result['specialties'] = $this->Specialty->find('all',
+		$result['data']['specialties'] = $this->Specialty->find('all',
 			array('fields' => array('id', 'name', 'description'),
 			      'conditions' => $specialties_disease_conditions));
 
 		$this->Specialty->Dslink->Disease->recursive = -1;
-		$result['diseases'] = $this->Specialty->Dslink->Disease->find('all',
+		$result['data']['diseases'] = $this->Specialty->Dslink->Disease->find('all',
 			array('fields' => array('id', 'name', 'description'),
 			      'conditions' => $specialties_disease_conditions));
 
 		$this->Specialty->Docspeclink->Doctor->recursive = -1;
-		$result['doctors'] = $this->Specialty->Docspeclink->Doctor->find('all',
+		$result['data']['doctors'] = $this->Specialty->Docspeclink->Doctor->find('all',
 			array('fields' => array('id', 'first_name', 'middle_name', 'last_name'),
 			      'conditions' => $doctors_conditions));
 		

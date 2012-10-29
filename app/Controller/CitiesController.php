@@ -15,7 +15,9 @@ class CitiesController extends AppController {
 	public function index() {
 		$this->City->recursive = 0;
 		if (isset($this->params['ext']) && $this->params['ext'] == 'json') {
-			$this->set('result', $this->City->find('list'));
+			$result['code'] = '200';
+			$result['data'] = $this->City->find('list');
+			$this->set('result', $result);
 			if (isset($this->request->query['jsonp_callback'])) {
 				$this->autoLayout = $this->autoRender = false;
 				$this->set('callback', $this->request->query['jsonp_callback']);

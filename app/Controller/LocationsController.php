@@ -15,7 +15,9 @@ class LocationsController extends AppController {
 	public function index() {
 		$this->Location->recursive = 0;
 		if (isset($this->params['ext']) && $this->params['ext'] == 'json') {
-			$this->set('result', $this->Location->find('list'));
+			$result['code'] = '200';
+			$result['data'] = $this->Location->find('list');
+			$this->set('result', $result);
 			if (isset($this->request->query['jsonp_callback'])) {
 				$this->autoLayout = $this->autoRender = false;
 				$this->set('callback', $this->request->query['jsonp_callback']);
@@ -52,7 +54,13 @@ class LocationsController extends AppController {
 		if ($this->request->is('post')) {
 			$this->Location->create();
 			$result = false;
-			if ($this->Location->save($this->request->data)) $result = $this->Location->find('list'); 
+			if ($this->Location->save($this->request->data)) {
+				$result['code'] = '200';
+				$result['data'] = $this->Location->find('list');
+			} else {
+				$result['code'] = '0';
+				$result['name'] = $this->Session->read('Message.flash');
+			} 
 			if (isset($this->params['ext']) && $this->params['ext'] == 'json') {
 				$this->set('result', array('result' => $result));
 				if (isset($this->request->query['jsonp_callback'])) {
@@ -63,7 +71,7 @@ class LocationsController extends AppController {
 					$this->set('_serialize', 'result');
 				}
 			} else {
-				if ($result) {
+				if ($result['code'] == '200') {
 					$this->Session->setFlash(__('The location has been saved'));
 					$this->redirect(array('action' => 'index'));
 				} else {
@@ -71,10 +79,12 @@ class LocationsController extends AppController {
 				}
 			}
 		}
-		$cities = $this->Location->City->find('list');
-		$countries = $this->Location->Country->find('list');
-		$pinCodes = $this->Location->PinCode->find('list');
-		$this->set(compact('cities', 'countries', 'pinCodes'));
+		if (!(isset($this->params['ext']) && $this->params['ext'] == 'json')) {
+			$cities = $this->Location->City->find('list');
+			$countries = $this->Location->Country->find('list');
+			$pinCodes = $this->Location->PinCode->find('list');
+			$this->set(compact('cities', 'countries', 'pinCodes'));
+		}
 	}
 
 /**
