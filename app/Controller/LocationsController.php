@@ -35,9 +35,10 @@ class LocationsController extends AppController {
 		$result['code'] = '200';
 
 		$conditions = array('name LIKE' => '%'.$term.'%');
+		$fields = array('id', 'name');
 		$this->Location->recursive = -1;
 
-		$result['data'] = $this->Location->find('list', array('conditions' => $conditions));
+		$result['data'] = $this->Location->find('all', array('fields' => $fields, 'conditions' => $conditions));
 		$this->set('result', $result);
 		if (isset($this->request->query['jsonp_callback'])) {
 			$this->autoLayout = $this->autoRender = false;
