@@ -8,8 +8,12 @@ App::uses('AppModel', 'Model');
  */
 class PinCode extends AppModel {
 
-   var $displayField = 'pin_code';
+   var $displayField = 'name';
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
+
+public $virtualFields = array(
+    'name' => 'CONCAT(PinCode.pin_code, "(", PinCode.city, ")")'
+);
 
 /**
  * hasMany associations

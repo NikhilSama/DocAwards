@@ -41,10 +41,10 @@ class AppController extends Controller {
 			$term = isset($this->request->query['term']) ? $this->request->query['term'] : null;
 			$result['code'] = '200';
 
-			$conditions = array($this->{$this->modelClass}->displayField.' LIKE' => '%'.$term.'%');
+			$conditions = array($this->{$this->modelClass}->displayField.' LIKE' => $term.'%');
 			$this->{$this->modelClass}->recursive = -1;
 
-			$result['data'] = $this->{$this->modelClass}->find('list', array('conditions' => $conditions));
+			$result['data'] = $this->{$this->modelClass}->find('list', array('conditions' => $conditions, 'limit' => 100));
 			$this->set('result', $result);
 			if (isset($this->request->query['jsonp_callback'])) {
 				$this->autoLayout = $this->autoRender = false;
