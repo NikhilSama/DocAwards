@@ -149,7 +149,7 @@ class PinCodesController extends AppController {
 
 		if ($result['status']) {
 		
-			$fields = array('pin_code', 'state', 'Region2', 'Region3', 'Region4', 'city', 'Area1', 'Area2');
+			$fields = array('id', 'pin_code');
 			$this->PinCode->recursive = -1;
 			$result['data'] = $this->PinCode->find('all', array(
 				'conditions' => $conditions, 
