@@ -36,4 +36,22 @@ class AppController extends Controller {
 			           'Auth' => array(
 			            	'loginRedirect' => array('controller' => 'posts', 'action' => 'index'),
      	       			   	'logoutRedirect' => array('controller' => 'pages', 'action' => 'display', 'home')));
+		
+		public function autocomplete () {
+			$term = isset($this->request->query['term']) ? $this->request->query['term'] : null;
+			$result['code'] = '200';
+
+			$conditions = array($this->{$this->modelClass}->displayField.' LIKE' => '%'.$term.'%');
+			$this->{$this->modelClass}->recursive = -1;
+
+			$result['data'] = $this->{$this->modelClass}->find('list', array('conditions' => $conditions));
+			$this->set('result', $result);
+			if (isset($this->request->query['jsonp_callback'])) {
+				$this->autoLayout = $this->autoRender = false;
+				$this->set('callback', $this->request->query['jsonp_callback']);
+				$this->render('/Layouts/jsonp');
+			} else {
+				$this->set('_serialize', 'result');
+			}		
+		}
 }

@@ -30,25 +30,6 @@ class LocationsController extends AppController {
 		}
 	}
 
-	public function autocomplete () {
-		$term = isset($this->request->query['term']) ? $this->request->query['term'] : null;
-		$result['code'] = '200';
-
-		$conditions = array('name LIKE' => '%'.$term.'%');
-		$fields = array('id', 'name');
-		$this->Location->recursive = -1;
-
-		$result['data'] = $this->Location->find('all', array('fields' => $fields, 'conditions' => $conditions));
-		$this->set('result', $result);
-		if (isset($this->request->query['jsonp_callback'])) {
-			$this->autoLayout = $this->autoRender = false;
-			$this->set('callback', $this->request->query['jsonp_callback']);
-			$this->render('/Layouts/jsonp');
-		} else {
-			$this->set('_serialize', 'result');
-		}		
-	}
-
 /**
  * view method
  *
