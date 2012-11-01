@@ -48,6 +48,8 @@ class DoctorsController extends AppController {
 			$doc_id = $this->del_doc_associations_if_exists(); 
 			if ($doc_id) $this->request->data['Doctor']['id'] = $doc_id; //Overwrite, dont create a new doc, if one exists
 			
+			$this->request->data['Doctor']['user_id'] = $this->Auth->user('id');
+
             $this->log($this->request->data['Doctor']);
 			if (isset($this->request->data['Doctor']['image']) && 
 				isset($this->request->data['Doctor']['image']['name'])) {	
