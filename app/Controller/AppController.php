@@ -39,9 +39,10 @@ class AppController extends Controller {
 		
 		public function autocomplete () {
 			$term = isset($this->request->query['term']) ? $this->request->query['term'] : null;
+			$head_only_match = isset($this->request->query['head_only_match']) ? 1 : 0;
 			$result['code'] = '200';
 
-			$conditions = array($this->{$this->modelClass}->displayField.' LIKE' => $term.'%');
+			$conditions = array($this->{$this->modelClass}->displayField.' LIKE' => ($head_only_match ? '' : '%').$term.'%');
 			$this->{$this->modelClass}->recursive = -1;
 
 			$result['data'] = $this->{$this->modelClass}->find('list', array('conditions' => $conditions, 'limit' => 100));

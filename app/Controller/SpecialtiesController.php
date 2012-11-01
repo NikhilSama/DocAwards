@@ -7,9 +7,6 @@ App::uses('AppController', 'Controller');
  */
 class SpecialtiesController extends AppController {
 
-    public function beforeFilter() {
-        $this->Auth->allow('autocomplete');
-    }
 
 /**
  * index method
@@ -162,8 +159,8 @@ class SpecialtiesController extends AppController {
 		$this->Session->setFlash(__('Specialty was not deleted'));
 		$this->redirect(array('action' => 'index'));
 	}
-	
-	public function autocomplete () {
+	//Use autocomplete in appcontroller
+	/*public function autocomplete () {
 		$term = isset($this->request->query['term']) ? $this->request->query['term'] : null;
 		$result = array('code' => '200', 'name' => '', 'search_term' => $term, 'data' => array());
 		
@@ -205,6 +202,6 @@ class SpecialtiesController extends AppController {
 		} else {
 			$this->set('_serialize', 'result');
 		}
-	}
+	}*/
 }
 
