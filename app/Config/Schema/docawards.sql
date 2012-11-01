@@ -92,6 +92,7 @@ CREATE  TABLE IF NOT EXISTS `docawards`.`doctors` (
   `modified` DATETIME NULL DEFAULT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_doctor_profile_users1_idx` (`user_id` ASC) ,
+  UNIQUE INDEX `user_id_UNIQUE` (`user_id` ASC) ,
   CONSTRAINT `fk_doctor_profile_users1`
     FOREIGN KEY (`user_id` )
     REFERENCES `docawards`.`users` (`id` )
