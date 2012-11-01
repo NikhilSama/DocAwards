@@ -12,6 +12,10 @@ App::uses('AppModel', 'Model');
  */
 class Doctor extends AppModel {
 
+public $virtualFields = array(
+    'full_name' => 'CONCAT("Dr. ",Doctor.first_name, " ", Doctor.middle_name, " ", Doctor.last_name)'
+);
+
 /**
  * Validation rules
  *

@@ -56,4 +56,26 @@ class AppController extends Controller {
 				$this->set('_serialize', 'result');
 			}		
 		}
+		public function ws_add() {
+			if ($this->request->is('post')) {
+				$this->{$this->modelClass}->create();
+				$result['code'] = '200';
+				if ($this->{$this->modelClass}->save($this->request->data)) {
+					$result['data'] = $this->{$this->modelClass}->getLastInsertId();
+				} else {
+					$result['code'] = 0; 
+					$result['name'] = $this->Session->read('Message.flash');
+ 				}
+
+				$this->set('result', $result);
+			
+				if (isset($this->request->query['jsonp_callback'])) {
+					$this->autoLayout = $this->autoRender = false;
+					$this->set('callback', $this->request->query['jsonp_callback']);
+					$this->render('/Layouts/jsonp');
+				} else {
+					$this->set('_serialize', 'result');
+				}
+			}
+		}
 }

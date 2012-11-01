@@ -42,15 +42,21 @@ class DoctorsController extends AppController {
 	public function ws_add() {
 		$result['code'] = 0;
 
-		if ($this->request->is('post')) {
+		if ($this->request->is('post') &&
+			isset($this->request->data['Doctor'])) {
+
+			$doc_id = $this->del_doc_associations_if_exists(); 
+			if ($doc_id) $this->request->data['Doctor']['id'] = $doc_id; //Overwrite, dont create a new doc, if one exists
+			
             $this->log($this->request->data['Doctor']);
-			if (isset($this->request->data['Doctor']['image'])) {	
-				$file_name
-                        	= 'profile_pics/'.$this->request->data['Doctor']['last_name'].$this->request->data['Doctor']['first_name'].
-                        	str_replace(" ","_", $this->request->data['Doctor']['image']['name']);
-                        	copy($this->request->data['Doctor']['image']['tmp_name'], $file_name);
-                        	$this->request->data['Doctor']['image'] = $file_name;
-                        }
+			if (isset($this->request->data['Doctor']['image']) && 
+				isset($this->request->data['Doctor']['image']['name'])) {	
+				
+				$file_name = 'profile_pics/'.$this->request->data['Doctor']['full_name'].
+                        	 	str_replace(" ","_", $this->request->data['Doctor']['image']['name']);
+                copy($this->request->data['Doctor']['image']['tmp_name'], $file_name);
+                $this->request->data['Doctor']['image'] = $file_name;
+            }
 			$this->Doctor->create();
             if ($this->Doctor->saveAssociated($this->request->data, array( 'deep' => true) )) {
 		    	$result['code'] = 200;
@@ -83,6 +89,22 @@ class DoctorsController extends AppController {
 			echo "not pst";
 			$this->request->data = $this->Doctor->find('first', array('conditions' => array('user_id' => $this->Auth->user('id'))));
 		}
+	}
+
+	function del_doc_associations_if_exists () {
+		$this->Doctor->recursive = -1; 
+		$existing_doc = $this->Doctor->find('first', array('fields' => array('id'),
+			'conditions' => array('user_id' => $this->Auth->user('id'))));
+		$doc_id = null;
+		if ($existing_doc) {
+			$doc_id =  $existing_doc['Doctor']['id'];
+			$this->Doctor->Docspeclink->deleteAll(array('doctor_id' => $doc_id));
+			$this->Doctor->Qualification->deleteAll(array('doctor_id' => $doc_id));
+			$this->Doctor->Experience->deleteAll(array('doctor_id' => $doc_id));
+			$this->Doctor->Docconsultlocation->deleteAll(array('doctor_id' => $doc_id));
+			$this->Doctor->DoctorContact->deleteAll(array('doctor_id' => $doc_id));
+		}
+		return $doc_id;
 	}
 /**
  * add method
@@ -310,7 +332,7 @@ class DoctorsController extends AppController {
 					);
 		}		
 
-		$fields = array('id', 'first_name', 'middle_name', 'last_name', 'one_line_intro', 'image');		
+		$fields = array('id', 'full_name', 'first_name', 'middle_name', 'last_name', 'one_line_intro', 'image');		
 		$doctors = $this->Doctor->find('all', array('fields' => $fields,
 			'contain' => $contain, 'conditions' => $conditions));
 		//echo debug($conditions);
@@ -352,7 +374,7 @@ class DoctorsController extends AppController {
 
 				array_push($result['data'], array(
 					'id'				=> $doctor['Doctor']['id'],
-					'name'  			=> 'Dr. '.$doctor['Doctor']['first_name'].' '.$doctor['Doctor']['last_name'],
+					'name'  			=> $doctor['Doctor']['full_name'],//'Dr. '.$doctor['Doctor']['first_name'].' '.$doctor['Doctor']['last_name'],
 					'image' 			=> IMAGE_BASE.$doctor['Doctor']['image'],
 					'one_line_intro' 	=> $doctor['Doctor']['one_line_intro'],
 					'specialty'			=> $specialty,
