@@ -50,7 +50,7 @@ class DoctorsController extends AppController {
 			
 			$this->request->data['Doctor']['user_id'] = $this->Auth->user('id');
 
-            $this->log($this->request->data['Doctor']);
+            $this->log($this->request->data);
 			if (isset($this->request->data['Doctor']['image']) && 
 				isset($this->request->data['Doctor']['image']['name'])) {	
 				
@@ -304,7 +304,7 @@ class DoctorsController extends AppController {
 		} else {
 			$contain = array (
 					  'Docconsultlocation' =>
-						array('fields' => array('addl'),
+						array(
 						      'Consultlocationtype' => array('fields' => array('name')),
 						      'Location' => array('fields' => array('id', 'name', 'address', 'neighborhood', 'lat', 'long'),
 								  'Country' => array('fields' => array('name')),
@@ -313,10 +313,10 @@ class DoctorsController extends AppController {
 						      'ConsultTiming' => array('ConsultType' => array('fields' => array('name'))),
 					      ),
 					'Docspeclink' =>
-						array('fields' => array('id'),
+						array(
 						      'Specialty' => array('fields' => array('name', 'description'))),
 					'Qualification' =>
-						array('fields' => array('id'),
+						array(
 						      'Location' => array(
 							'fields' => array('name', 'address', 'lat', 'long'),
 							'City' => array('fields'=>array('name')), 'Country'=> array('fields'=>array('name')),
@@ -324,18 +324,16 @@ class DoctorsController extends AppController {
 						      'Degree' => array('fields' => array('name'))
 						      ),
 					'Experience' =>
-						array('fields' => array('from', 'to', 'dept'),
+						array(
 						      'Location' => array(
 							'fields' => array('name', 'address', 'lat', 'long'),
 							'City' => array('fields'=>array('name')), 'Country'=> array('fields'=>array('name')),
 							'PinCode' => array('fields' => array('pin_code')))),
-					'DoctorContact' =>
-						array('fields' => array('phone', 'email'))
+					'DoctorContact'
 					);
 		}		
 
-		$fields = array('id', 'full_name', 'first_name', 'middle_name', 'last_name', 'one_line_intro', 'image');		
-		$doctors = $this->Doctor->find('all', array('fields' => $fields,
+		$doctors = $this->Doctor->find('all', array(
 			'contain' => $contain, 'conditions' => $conditions));
 		//echo debug($conditions);
 		//echo debug($doctors);

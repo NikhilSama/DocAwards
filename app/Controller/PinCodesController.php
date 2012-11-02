@@ -31,7 +31,11 @@ class PinCodesController extends AppController {
 			$this->set('pinCodes', $this->paginate());
 		}
 	}
-
+	public function ws_add() {
+		$this->request->data['PinCode']['pin_code'] = $this->request->data['PinCode']['name'];
+		$this->request->data['PinCode']['city'] = '';
+		parent::ws_add();
+	}
 /**
  * view method
  *
