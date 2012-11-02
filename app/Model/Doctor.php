@@ -124,4 +124,9 @@ public $virtualFields = array(
 		)
 	);
 
+	public function beforeSave($options = array()) {
+		if(!empty($this->data['Doctor']['DOB'])) {
+			$this->data['Doctor']['DOB'] = date(‘Y-m-d‘, strtotime($this->data['Doctor']['DOB']));
+		}
+	}
 }
