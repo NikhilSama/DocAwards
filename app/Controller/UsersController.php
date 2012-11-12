@@ -60,7 +60,7 @@ class UsersController extends AppController {
                         $this->User->create();
                         if ($this->User->save($this->request->data)) {
 				if ($this->Auth->login()) {
-            				$this->redirect($this->referer());
+            				$this->redirect($this->referer().'/#create_profile');
                         	}
 			}
                 }
@@ -129,11 +129,17 @@ public function backbone_login() {
     if ($this->request->is('post')) {
 
         if ($this->Auth->login()) {
-            $this->redirect($this->referer());
+            $this->redirect($this->referer().'#create_profile');
         } else {
             $this->Session->setFlash(__('Invalid username or password, try again'));
         }
     }
+}
+
+public function backbone_logout () {
+	$this->Auth->logoutRedirect = $this->referer();
+	$this->Auth->logout();
+	$this->redirect($this->referer());
 }
 
 
@@ -144,10 +150,21 @@ public function logout() {
 public function ajax_login() {
     if ($this->request->is('post')) {
        if ($this->Auth->login()) {
-		$this->set('user', $this->User->read('id', $this->Auth->user('id')));
+		$user['status'] = 1;
+		$user['data'] = $this->User->find('first', array(
+                        'conditions' => array('id' => $this->Auth->user('id')),
+                        'contain'        => array('Doctor')));
+		$this->set('user', $user);
 		$this->set('_serialize', 'user');
         } else {
-        	$this->set('user', -1);
+		$user['status'] = 0;
+        	if ($this->User->findByUsername($this->request->data['User']['username'])) {
+			$user['user'] = $this->User->findByUsername($this->request->data['User']['username']);
+			$user['error_type'] = 'pass';
+		} else {
+			$user['error_type'] = 'user'; 
+		}
+		$this->set('user', $user);
 		$this->set('_serialize', 'user');
 	}
     }

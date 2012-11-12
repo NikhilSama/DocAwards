@@ -59,4 +59,11 @@ class Experience extends AppModel {
 			'order' => ''
 		)
 	);
+
+        public function beforeSave($options = array()) {
+                if(!empty($this->data['Experience']['from'])) {
+                        $this->data['Experience']['from'] = date('Y-m-d', strtotime($this->data['Experience']['from']));
+                        $this->data['Experience']['to'] = date('Y-m-d', strtotime($this->data['Experience']['to']));
+                }
+        }
 }

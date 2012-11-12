@@ -8,7 +8,7 @@ App::uses('AppController', 'Controller');
 class DoctorsController extends AppController {
 
     public function beforeFilter() {
-        $this->Auth->allow('get_doctors', 'ws_add');
+        $this->Auth->allow('get_doctors');
     }
 
 
@@ -103,6 +103,11 @@ class DoctorsController extends AppController {
 			$this->Doctor->Docspeclink->deleteAll(array('doctor_id' => $doc_id));
 			$this->Doctor->Qualification->deleteAll(array('doctor_id' => $doc_id));
 			$this->Doctor->Experience->deleteAll(array('doctor_id' => $doc_id));
+			$this->Doctor->Docconsultlocation->recursive = -1;
+			$locations = $this->Doctor->Docconsultlocation->find('all', array('fields' => array('id'), 'conditions' => array('doctor_id' => $doc_id)));
+			foreach ($locations as $location) {
+				$this->Doctor->Docconsultlocation->ConsultTiming->deleteAll(array('docconsultlocation_id'=>$location['Docconsultlocation']['id']));
+			}
 			$this->Doctor->Docconsultlocation->deleteAll(array('doctor_id' => $doc_id));
 			$this->Doctor->DoctorContact->deleteAll(array('doctor_id' => $doc_id));
 		}
@@ -307,7 +312,7 @@ class DoctorsController extends AppController {
 						array(
 						      'Consultlocationtype' => array('fields' => array('name')),
 						      'Location' => array('fields' => array('id', 'name', 'address', 'neighborhood', 'lat', 'long'),
-								  'Country' => array('fields' => array('name')),
+								  'Country' => array('fields' => array('name', 'iso2')),
 								  'City' => array('fields' => array('name')),
 								  'PinCode' => array('fields' => array('pin_code'))),
 						      'ConsultTiming' => array('ConsultType' => array('fields' => array('name'))),
@@ -319,7 +324,7 @@ class DoctorsController extends AppController {
 						array(
 						      'Location' => array(
 							'fields' => array('name', 'address', 'lat', 'long'),
-							'City' => array('fields'=>array('name')), 'Country'=> array('fields'=>array('name')),
+							'City' => array('fields'=>array('name')), 'Country'=> array('fields'=>array('name', 'iso2')),
 							'PinCode' => array('fields' => array('pin_code'))),
 						      'Degree' => array('fields' => array('name'))
 						      ),
@@ -327,7 +332,7 @@ class DoctorsController extends AppController {
 						array(
 						      'Location' => array(
 							'fields' => array('name', 'address', 'lat', 'long'),
-							'City' => array('fields'=>array('name')), 'Country'=> array('fields'=>array('name')),
+							'City' => array('fields'=>array('name')), 'Country'=> array('fields'=>array('name', 'iso2')),
 							'PinCode' => array('fields' => array('pin_code')))),
 					'DoctorContact'
 					);

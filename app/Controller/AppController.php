@@ -40,10 +40,12 @@ class AppController extends Controller {
 		public function autocomplete () {
 			$term = isset($this->request->query['term']) ? $this->request->query['term'] : null;
 			$head_only_match = isset($this->request->query['head_only_match']) ? $this->request->query['head_only_match'] : 0;
+			$search_by_id = isset($this->request->query['search_by_id']) ? explode(',', $this->request->query['search_by_id']) : 0;
 			$limit = isset($this->request->query['limit']) ? $this->request->query['limit'] : 25;
 			$result['code'] = '200';
-
-			$conditions = array($this->{$this->modelClass}->displayField.' LIKE' => ($head_only_match ? '' : '%').$term.'%');
+			$conditions = ($search_by_id) ? 
+					array('id' => $search_by_id) :
+					array($this->{$this->modelClass}->displayField.' LIKE' => ($head_only_match ? '' : '%').$term.'%');
 			$this->{$this->modelClass}->recursive = -1;
 
 			$result['data'] = $this->{$this->modelClass}->find('list', array('conditions' => $conditions, 'limit' => $limit));
@@ -63,7 +65,7 @@ class AppController extends Controller {
 				if ($this->{$this->modelClass}->save($this->request->data)) {
 					$this->{$this->modelClass}->recursive = -1;
 					$result['data'] = $this->{$this->modelClass}->find('list', 
-						array('conditions' => array('id'=>$this->{$this->modelClass}->getLastInsertId(), 'limit' => 1)));
+						array('conditions' => array('id'=>$this->{$this->modelClass}->getLastInsertId()), 'limit' => 1));
 				} else {
 					$result['code'] = 0; 
 					$result['name'] = $this->Session->read('Message.flash');
